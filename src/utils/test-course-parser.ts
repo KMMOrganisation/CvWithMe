@@ -8,18 +8,20 @@ export async function testCourseParser(): Promise<void> {
   try {
     console.log('🧪 Testing Course.md parser...');
     
-    // Try to load Course.md content
+    // Try to load embedded Course.md content
     let courseContent: string;
     
     try {
-      const response = await fetch('/Course.md');
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`);
+      const { COURSE_MARKDOWN_CONTENT, HAS_COURSE_CONTENT } = await import('../data/courseContent.js');
+      
+      if (HAS_COURSE_CONTENT && COURSE_MARKDOWN_CONTENT) {
+        courseContent = COURSE_MARKDOWN_CONTENT;
+        console.log('✅ Successfully loaded embedded Course.md content');
+      } else {
+        throw new Error('No embedded course content available');
       }
-      courseContent = await response.text();
-      console.log('✅ Successfully loaded Course.md');
     } catch (error) {
-      console.error('❌ Failed to load Course.md:', error);
+      console.error('❌ Failed to load embedded Course.md:', error);
       console.log('📝 Using sample Course.md content for testing...');
       courseContent = getSampleCourseContent();
     }

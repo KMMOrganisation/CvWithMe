@@ -1,31 +1,23 @@
 import { processCourseMarkdown } from './courseIntegration.js';
 import { Module } from '../data/types/index.js';
-
-// This will be populated at build time with the actual Course.md content
-let COURSE_CONTENT: string | null = null;
+import { COURSE_MARKDOWN_CONTENT, HAS_COURSE_CONTENT, COURSE_METADATA } from '../data/courseContent.js';
 
 /**
- * Sets the course content (called during build process)
- */
-export function setCourseContent(content: string): void {
-  COURSE_CONTENT = content;
-}
-
-/**
- * Loads and processes course content that was loaded at build time
+ * Loads and processes course content that was embedded at build time
  */
 export function loadAndProcessCourse(): Module[] {
   try {
-    if (!COURSE_CONTENT) {
+    if (!HAS_COURSE_CONTENT || !COURSE_MARKDOWN_CONTENT) {
       console.warn('Course.md content not available, using sample data');
       return [];
     }
     
-    console.log('📖 Processing Course.md content');
-    console.log(`📏 Content size: ${COURSE_CONTENT.length} characters`);
+    console.log('📖 Processing embedded Course.md content');
+    console.log(`📏 Content size: ${COURSE_MARKDOWN_CONTENT.length} characters`);
+    console.log(`🕒 Generated at: ${COURSE_METADATA.generatedAt}`);
     
     // Process the markdown content
-    const modules = processCourseMarkdown(COURSE_CONTENT);
+    const modules = processCourseMarkdown(COURSE_MARKDOWN_CONTENT);
     
     console.log(`✅ Successfully parsed ${modules.length} modules from Course.md`);
     
@@ -40,7 +32,7 @@ export function loadAndProcessCourse(): Module[] {
  * Checks if course content is available
  */
 export function isCourseContentAvailable(): boolean {
-  return COURSE_CONTENT !== null && COURSE_CONTENT.length > 0;
+  return HAS_COURSE_CONTENT && COURSE_MARKDOWN_CONTENT.length > 0;
 }
 
 /**
@@ -50,23 +42,29 @@ export function getCourseContentInfo(): {
   available: boolean;
   size?: number;
   moduleCount?: number;
+  generatedAt?: string;
+  source?: string;
 } {
-  if (!COURSE_CONTENT) {
+  if (!HAS_COURSE_CONTENT) {
     return { available: false };
   }
   
   try {
-    const modules = processCourseMarkdown(COURSE_CONTENT);
+    const modules = processCourseMarkdown(COURSE_MARKDOWN_CONTENT);
     return {
       available: true,
-      size: COURSE_CONTENT.length,
-      moduleCount: modules.length
+      size: COURSE_MARKDOWN_CONTENT.length,
+      moduleCount: modules.length,
+      generatedAt: COURSE_METADATA.generatedAt,
+      source: COURSE_METADATA.source
     };
   } catch (error) {
     return {
       available: true,
-      size: COURSE_CONTENT.length,
-      moduleCount: 0
+      size: COURSE_MARKDOWN_CONTENT.length,
+      moduleCount: 0,
+      generatedAt: COURSE_METADATA.generatedAt,
+      source: COURSE_METADATA.source
     };
   }
 }

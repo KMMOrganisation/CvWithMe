@@ -1,4 +1,5 @@
 import { defineConfig } from 'vite'
+import { execSync } from 'child_process'
 
 export default defineConfig({
   server: {
@@ -8,5 +9,20 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     sourcemap: true
-  }
+  },
+  plugins: [
+    {
+      name: 'process-course-content',
+      buildStart() {
+        // Process Course.md during build
+        try {
+          console.log('🔄 Processing Course.md content...');
+          execSync('node scripts/processCourse.js', { stdio: 'inherit' });
+          console.log('✅ Course.md processing completed');
+        } catch (error) {
+          console.warn('⚠️ Course.md processing failed, using fallback');
+        }
+      }
+    }
+  ]
 })

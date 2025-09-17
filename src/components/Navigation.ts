@@ -1,10 +1,10 @@
-import { Module, NavigationProps } from '../data/types/index.js';
+import { NavigationProps } from '../data/types/index.js';
 
 export class Navigation {
   private element: HTMLElement;
   private props: NavigationProps;
   private isMenuOpen = false;
-  private focusableElements: HTMLElement[] = [];
+  // private focusableElements: HTMLElement[] = [];
 
   constructor(container: HTMLElement, props: NavigationProps) {
     this.props = props;
@@ -79,7 +79,7 @@ export class Navigation {
           </svg>
         </button>
         <div class="nav-modules-dropdown" role="menu" aria-hidden="true">
-          ${this.props.modules.map((module, index) => `
+          ${this.props.modules.map((module) => `
             <a 
               href="/module/${module.slug}" 
               class="nav-module-item ${this.props.currentModule === module.id ? 'active' : ''}"
@@ -197,7 +197,7 @@ export class Navigation {
 
     // Desktop modules dropdown
     const modulesToggle = this.element.querySelector('.nav-modules-toggle') as HTMLButtonElement;
-    const modulesDropdown = this.element.querySelector('.nav-modules-dropdown') as HTMLElement;
+    // const modulesDropdown = this.element.querySelector('.nav-modules-dropdown') as HTMLElement;
     
     modulesToggle?.addEventListener('click', () => this.toggleModulesDropdown());
     
@@ -280,9 +280,12 @@ export class Navigation {
       '[tabindex]:not([tabindex="-1"])'
     ];
     
-    this.focusableElements = Array.from(
-      this.element.querySelectorAll(focusableSelectors.join(', '))
-    ) as HTMLElement[];
+    // this.focusableElements = Array.from(
+    //   this.element.querySelectorAll(focusableSelectors.join(', '))
+    // ) as HTMLElement[];
+    
+    // For now, just ensure the selectors are available for future use
+    this.element.querySelectorAll(focusableSelectors.join(', '));
   }
 
   private toggleMobileMenu(): void {
@@ -314,7 +317,7 @@ export class Navigation {
 
   private toggleModulesDropdown(): void {
     const toggle = this.element.querySelector('.nav-modules-toggle') as HTMLButtonElement;
-    const dropdown = this.element.querySelector('.nav-modules-dropdown') as HTMLElement;
+    // const dropdown = this.element.querySelector('.nav-modules-dropdown') as HTMLElement;
     const isOpen = toggle?.getAttribute('aria-expanded') === 'true';
     
     if (isOpen) {

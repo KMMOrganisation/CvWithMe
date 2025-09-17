@@ -252,7 +252,7 @@ export function validateLessonContent(lesson: ParsedMarkdownLesson): string[] {
 export function parseCourseMarkdown(courseContent: string): ParsedCourse | null {
   try {
     const lines = courseContent.split('\n');
-    let currentIndex = 0;
+    // let currentIndex = 0;
     
     // Extract course title and description
     const courseTitle = extractCourseTitle(lines);
@@ -317,7 +317,7 @@ function parseModulesFromCourse(courseContent: string): Module[] {
   let moduleId = 1;
   
   for (let i = 1; i < sections.length; i += 3) {
-    const sectionNumber = parseInt(sections[i], 10);
+    // const sectionNumber = parseInt(sections[i], 10);
     const sectionTitle = sections[i + 1].trim();
     const sectionContent = sections[i + 2] || '';
     
@@ -368,7 +368,7 @@ function parseLessonsFromSection(sectionContent: string, moduleId: number): Less
   let lessonId = (moduleId - 1) * 10 + 1; // Ensure unique lesson IDs across modules
   
   for (let i = 1; i < lessonParts.length; i += 4) {
-    const sectionNum = parseInt(lessonParts[i], 10);
+    // const sectionNum = parseInt(lessonParts[i], 10);
     const lessonNum = parseInt(lessonParts[i + 1], 10);
     const lessonTitle = lessonParts[i + 2].trim();
     const lessonContent = lessonParts[i + 3] || '';

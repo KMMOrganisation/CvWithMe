@@ -1,4 +1,4 @@
-import { ModuleCard, ModuleCardProps } from './ModuleCard.js';
+import { ModuleCard } from './ModuleCard.js';
 import { sampleModules } from '../data/sampleData.js';
 
 export class ModuleCardDemo {

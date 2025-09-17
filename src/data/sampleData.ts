@@ -1,5 +1,5 @@
 import { Module, Lesson, ContentBlock } from './types/index.js';
-import { processCourseMarkdown } from '../utils/courseIntegration.js';
+// import { processCourseMarkdown } from '../utils/courseIntegration.js';
 
 // Sample content blocks for lessons
 const sampleContentBlocks: ContentBlock[] = [
@@ -235,18 +235,18 @@ export function getModuleLessonCount(moduleId: number): number {
 export async function loadRealCourseData(): Promise<Module[]> {
   try {
     // Import the course loader
-    const { loadAndProcessCourse, validateCourseFile } = await import('../utils/loadCourseContent.js');
+    const { loadAndProcessCourse, isCourseContentAvailable } = await import('../utils/loadCourseContent.js');
     
-    // Check if Course.md exists
-    const courseExists = await validateCourseFile();
+    // Check if Course.md content is available
+    const courseAvailable = isCourseContentAvailable();
     
-    if (!courseExists) {
-      console.warn('Course.md file not found, using sample data');
+    if (!courseAvailable) {
+      console.warn('Course.md content not available, using sample data');
       return sampleModules;
     }
     
     // Load and process the course content
-    const realModules = await loadAndProcessCourse();
+    const realModules = loadAndProcessCourse();
     
     if (realModules.length > 0) {
       console.log(`✅ Successfully loaded ${realModules.length} modules from Course.md`);

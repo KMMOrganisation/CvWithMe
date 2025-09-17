@@ -8,7 +8,7 @@ import { testCourseParser } from './utils/test-course-parser.js'
 console.log('CV Tutorial Website - Development Environment Ready!')
 
 // Initialize course data system
-let modules: any[] = []
+// let modules: any[] = []
 let courseStats: any = null
 
 async function initializeApp() {
@@ -16,7 +16,7 @@ async function initializeApp() {
   
   try {
     // Initialize course data (will try to load Course.md or fall back to sample data)
-    modules = await initializeCourseData()
+    await initializeCourseData()
     courseStats = getCourseStats()
     
     console.log('✅ Course data initialized successfully!')
