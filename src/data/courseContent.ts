@@ -2379,6 +2379,6 @@ export const HAS_COURSE_CONTENT = true;
  */
 export const COURSE_METADATA = {
   contentLength: 153059,
-  generatedAt: '2025-09-17T19:28:11.843Z',
+  generatedAt: '2025-09-17T19:34:32.080Z',
   source: 'Course.md'
 };
