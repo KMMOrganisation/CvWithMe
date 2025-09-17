@@ -21,7 +21,7 @@
   - Set up content validation and error handling
   - _Requirements: 1.2, 1.3, 6.1, 6.2_
 
-- [-] 4. Parse and integrate Course.md content into data structure
+- [x] 4. Parse and integrate Course.md content into data structure
   - Create content parser to extract modules and lessons from Course.md
   - Parse lesson content including video scripts, slide decks, and code examples
   - Convert markdown content to ContentBlock format (text, code, callout types)
@@ -46,7 +46,7 @@
   - Ensure responsive design across screen sizes
   - _Requirements: 1.2, 6.1, 6.2, 6.3, 6.4_
 
-- [ ] 7. Build lesson card component
+- [x] 7. Build lesson card component
   - Create LessonCard component for display within modules
   - Implement tool requirements and prerequisite display
   - Add visual complexity indicators and time estimates
