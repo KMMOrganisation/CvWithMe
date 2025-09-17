@@ -2,6 +2,7 @@ import './styles/main.css'
 import { initializeCourseData, getAllModules, getCourseStats } from './data/index.js'
 import { LandingPage } from './pages/LandingPage.js'
 import { testCourseParser } from './utils/test-course-parser.js'
+import { testModulePage } from './pages/test-module-page.js'
 
 // Main application entry point
 console.log('CV Tutorial Website - Landing Page Implementation')
@@ -43,17 +44,28 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Get modules from the initialized data
   const currentModules = getAllModules()
   
-  // Create and initialize the landing page
-  const landingPage = new LandingPage(app, {
-    modules: currentModules,
-    courseStats: {
-      totalModules: courseStats?.totalModules || 0,
-      totalLessons: courseStats?.totalLessons || 0,
-      totalContentBlocks: courseStats?.totalContentBlocks || 0
-    }
-  })
+  // Check URL parameters to determine which page to show
+  const urlParams = new URLSearchParams(window.location.search)
+  const testPage = urlParams.get('test')
   
-  console.log('✅ Landing page initialized with hero section, module grid, and responsive design')
-  console.log('✅ Navigation component integrated with smooth scroll functionality')
-  console.log('✅ Module cards rendered with real course data and progress indicators')
+  if (testPage === 'module') {
+    // Test the module page
+    console.log('🧪 Loading ModulePage test...')
+    await testModulePage()
+  } else {
+    // Create and initialize the landing page (default)
+    const landingPage = new LandingPage(app, {
+      modules: currentModules,
+      courseStats: {
+        totalModules: courseStats?.totalModules || 0,
+        totalLessons: courseStats?.totalLessons || 0,
+        totalContentBlocks: courseStats?.totalContentBlocks || 0
+      }
+    })
+    
+    console.log('✅ Landing page initialized with hero section, module grid, and responsive design')
+    console.log('✅ Navigation component integrated with smooth scroll functionality')
+    console.log('✅ Module cards rendered with real course data and progress indicators')
+    console.log('💡 To test the ModulePage, add ?test=module to the URL')
+  }
 })

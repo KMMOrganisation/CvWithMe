@@ -62,7 +62,7 @@
   - Ensure mobile-responsive design
   - _Requirements: 1.1, 1.2, 2.1, 4.1, 4.2_
 
-- [ ] 9. Develop module page layout and functionality
+- [-] 9. Develop module page layout and functionality
   - Create module detail page with header and description
   - Implement lesson grid layout within modules
   - Add module progress tracking and indicators
