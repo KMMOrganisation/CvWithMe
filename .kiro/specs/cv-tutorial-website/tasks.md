@@ -79,7 +79,7 @@
   - Include proper alt text and captions for accessibility
   - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5_
 
-- [ ] 11. Implement lesson page layout and navigation
+- [-] 11. Implement lesson page layout and navigation
   - Create lesson detail page with header and breadcrumbs
   - Integrate ContentRenderer for lesson content display
   - Add lesson navigation (previous/next within module)

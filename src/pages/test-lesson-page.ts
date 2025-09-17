@@ -117,9 +117,16 @@ function createTestLessonPage(): void {
   container.id = 'test-lesson-container';
   document.body.appendChild(container);
 
-  // Create lesson page
+  // Create lesson page with enhanced props
   const lessonPage = new LessonPage(container, {
     lesson: sampleLesson,
+    module: {
+      id: 1,
+      title: "Getting Started with HTML",
+      slug: "getting-started-html",
+      totalLessons: 5
+    },
+    currentLessonIndex: 0, // First lesson (0-based index)
     onNavigateBack: () => {
       console.log('Navigate back to module');
       alert('Navigate back to module (demo)');
@@ -131,6 +138,10 @@ function createTestLessonPage(): void {
     onNavigateNext: () => {
       console.log('Navigate to next lesson');
       alert('Navigate to next lesson (demo)');
+    },
+    onNavigateToModule: (moduleSlug: string) => {
+      console.log(`Navigate to module: ${moduleSlug}`);
+      alert(`Navigate to module: ${moduleSlug} (demo)`);
     }
   });
 
