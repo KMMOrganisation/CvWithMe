@@ -4,7 +4,7 @@
 
 import { LessonPage } from './LessonPage.js';
 import { ContentRendererDemo } from '../components/ContentRendererDemo.js';
-import { Lesson, ContentBlock } from '../data/types/index.js';
+import { Lesson } from '../data/types/index.js';
 
 // Sample lesson with rich content for testing
 const sampleLesson: Lesson = {

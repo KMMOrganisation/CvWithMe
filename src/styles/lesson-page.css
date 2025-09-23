@@ -306,13 +306,22 @@
 }
 
 /* Responsive Design */
+@media (max-width: 1024px) {
+  .lesson-page {
+    max-width: 700px;
+    padding: var(--space-5);
+  }
+}
+
 @media (max-width: 768px) {
   .lesson-page {
+    max-width: none;
     padding: var(--space-4);
   }
   
   .lesson-title {
     font-size: var(--text-3xl);
+    line-height: var(--leading-tight);
   }
   
   .lesson-description {
@@ -323,13 +332,28 @@
     flex-direction: column;
     align-items: flex-start;
     gap: var(--space-3);
+    padding: var(--space-4);
   }
   
   .metadata-item {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--space-1);
+    flex-direction: row;
+    align-items: center;
+    gap: var(--space-2);
     width: 100%;
+  }
+  
+  .metadata-label {
+    min-width: 80px;
+    flex-shrink: 0;
+  }
+  
+  .metadata-value {
+    flex: 1;
+  }
+  
+  .tools-list,
+  .prerequisites-list {
+    justify-content: flex-start;
   }
   
   .lesson-content-container {
@@ -338,13 +362,15 @@
   
   .lesson-navigation {
     flex-direction: column;
-    gap: var(--space-3);
+    gap: var(--space-4);
+    padding: var(--space-5);
   }
   
   .nav-btn {
     width: 100%;
     justify-content: center;
     min-width: auto;
+    min-height: 48px;
   }
   
   .lesson-progress {
@@ -352,9 +378,13 @@
     width: 100%;
     order: -1;
   }
+  
+  .progress-indicator {
+    gap: var(--space-3);
+  }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 640px) {
   .lesson-page {
     padding: var(--space-3);
   }
@@ -363,8 +393,35 @@
     font-size: var(--text-2xl);
   }
   
+  .lesson-description {
+    font-size: var(--text-sm);
+  }
+  
   .lesson-metadata {
     padding: var(--space-3);
+    gap: var(--space-2);
+  }
+  
+  .metadata-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-1);
+  }
+  
+  .metadata-label {
+    min-width: auto;
+    font-size: var(--text-xs);
+    font-weight: 700;
+  }
+  
+  .metadata-value {
+    font-size: var(--text-xs);
+  }
+  
+  .tool-badge,
+  .prerequisite-badge {
+    font-size: var(--text-xs);
+    padding: 2px var(--space-1);
   }
   
   .lesson-content-container {
@@ -373,6 +430,138 @@
   
   .lesson-navigation {
     padding: var(--space-4);
+    gap: var(--space-3);
+  }
+  
+  .nav-btn {
+    padding: var(--space-3) var(--space-4);
+    font-size: var(--text-sm);
+    min-height: 44px;
+  }
+  
+  .nav-icon {
+    font-size: var(--text-base);
+  }
+}
+
+@media (max-width: 480px) {
+  .lesson-page {
+    padding: var(--space-2);
+  }
+  
+  .lesson-title {
+    font-size: var(--text-xl);
+    margin-bottom: var(--space-3);
+  }
+  
+  .lesson-description {
+    font-size: var(--text-sm);
+  }
+  
+  .lesson-metadata {
+    padding: var(--space-2);
+  }
+  
+  .metadata-item {
+    gap: var(--space-1);
+  }
+  
+  .lesson-content-container {
+    padding: var(--space-2);
+  }
+  
+  .lesson-navigation {
+    padding: var(--space-3);
+  }
+  
+  .nav-btn {
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--text-sm);
+    min-height: 40px;
+  }
+  
+  .progress-text {
+    font-size: var(--text-xs);
+  }
+  
+  .progress-fraction {
+    font-size: var(--text-xs);
+  }
+  
+  /* Breadcrumb improvements for mobile */
+  .breadcrumb-list {
+    font-size: var(--text-xs);
+    gap: var(--space-1);
+  }
+  
+  .breadcrumb-btn,
+  .breadcrumb-link {
+    padding: var(--space-1);
+    font-size: var(--text-xs);
+  }
+  
+  .breadcrumb-separator {
+    margin: 0 2px;
+  }
+}
+
+/* Landscape orientation optimizations */
+@media (max-width: 768px) and (orientation: landscape) {
+  .lesson-page {
+    padding: var(--space-3);
+  }
+  
+  .lesson-navigation {
+    flex-direction: row;
+    gap: var(--space-3);
+  }
+  
+  .nav-btn {
+    flex: 1;
+    max-width: 200px;
+  }
+  
+  .lesson-progress {
+    order: 0;
+    flex: 1;
+    max-width: 150px;
+  }
+}
+
+/* Safe area support */
+@supports (padding: max(0px)) {
+  .lesson-page {
+    padding-left: max(var(--space-4), env(safe-area-inset-left));
+    padding-right: max(var(--space-4), env(safe-area-inset-right));
+  }
+  
+  @media (max-width: 640px) {
+    .lesson-page {
+      padding-left: max(var(--space-3), env(safe-area-inset-left));
+      padding-right: max(var(--space-3), env(safe-area-inset-right));
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .lesson-page {
+      padding-left: max(var(--space-2), env(safe-area-inset-left));
+      padding-right: max(var(--space-2), env(safe-area-inset-right));
+    }
+  }
+}
+
+/* Improved touch targets for mobile */
+@media (hover: none) and (pointer: coarse) {
+  .breadcrumb-btn,
+  .breadcrumb-link {
+    min-height: 32px;
+    min-width: 32px;
+    padding: var(--space-2);
+  }
+  
+  .nav-btn {
+    min-height: 48px;
+    padding: var(--space-3) var(--space-4);
   }
 }
 

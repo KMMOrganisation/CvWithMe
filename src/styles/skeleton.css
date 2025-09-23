@@ -1,0 +1,306 @@
+/**
+ * Skeleton Loading Styles
+ * 
+ * Provides smooth loading animations for content placeholders
+ */
+
+/* Base skeleton styles */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--gray-100) 25%,
+    var(--gray-50) 50%,
+    var(--gray-100) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+  border-radius: 4px;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Text skeleton */
+.skeleton-text {
+  padding: var(--space-4);
+}
+
+.skeleton-line {
+  height: 1rem;
+  margin-bottom: var(--space-2);
+  border-radius: 2px;
+  background: inherit;
+  animation: inherit;
+}
+
+.skeleton-line:last-child {
+  margin-bottom: 0;
+}
+
+/* Image skeleton */
+.skeleton-image {
+  width: 100%;
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.skeleton-placeholder {
+  font-size: 2rem;
+  opacity: 0.3;
+  animation: skeleton-pulse 2s infinite;
+}
+
+@keyframes skeleton-pulse {
+  0%, 100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+/* Video skeleton */
+.skeleton-video {
+  width: 100%;
+  height: 300px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+.skeleton-video .skeleton-placeholder {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.skeleton-video-controls {
+  height: 40px;
+  background: var(--gray-200);
+  border-radius: 0 0 4px 4px;
+  position: relative;
+  overflow: hidden;
+}
+
+.skeleton-video-controls::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: var(--space-3);
+  transform: translateY(-50%);
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--gray-300);
+  animation: skeleton-loading 1.5s infinite;
+}
+
+/* Code skeleton */
+.skeleton-code {
+  border: 1px solid var(--gray-200);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.skeleton-code-header {
+  height: 40px;
+  background: var(--gray-100);
+  border-bottom: 1px solid var(--gray-200);
+  position: relative;
+  overflow: hidden;
+}
+
+.skeleton-code-header::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: var(--space-3);
+  transform: translateY(-50%);
+  width: 60px;
+  height: 20px;
+  border-radius: 2px;
+  background: var(--gray-200);
+  animation: skeleton-loading 1.5s infinite;
+}
+
+.skeleton-code-content {
+  padding: var(--space-4);
+  background: var(--gray-50);
+}
+
+.skeleton-code-line {
+  height: 1.2rem;
+  margin-bottom: var(--space-2);
+  border-radius: 2px;
+  background: var(--gray-200);
+  animation: skeleton-loading 1.5s infinite;
+}
+
+.skeleton-code-line:last-child {
+  margin-bottom: 0;
+}
+
+/* Card skeleton */
+.skeleton-card {
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+  padding: var(--space-6);
+  background: white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.skeleton-card-header {
+  width: 60px;
+  height: 20px;
+  margin-bottom: var(--space-3);
+  border-radius: 2px;
+  background: var(--gray-200);
+  animation: skeleton-loading 1.5s infinite;
+}
+
+.skeleton-card-title {
+  width: 80%;
+  height: 1.5rem;
+  margin-bottom: var(--space-2);
+  border-radius: 2px;
+  background: var(--gray-300);
+  animation: skeleton-loading 1.5s infinite;
+}
+
+.skeleton-card-meta {
+  width: 50%;
+  height: 1rem;
+  margin-bottom: var(--space-4);
+  border-radius: 2px;
+  background: var(--gray-200);
+  animation: skeleton-loading 1.5s infinite;
+}
+
+.skeleton-card-content .skeleton-line {
+  background: var(--gray-200);
+}
+
+/* Grid skeletons */
+.skeleton-module-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--space-6);
+  padding: var(--space-6);
+}
+
+.skeleton-lesson-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--space-4);
+  padding: var(--space-4);
+}
+
+.skeleton-lesson-card {
+  min-height: 200px;
+}
+
+/* Fade out animation */
+.skeleton-fade-out {
+  animation: skeleton-fade-out 0.3s ease-out forwards;
+}
+
+@keyframes skeleton-fade-out {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .skeleton-module-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+    padding: var(--space-4);
+  }
+  
+  .skeleton-lesson-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+    padding: var(--space-3);
+  }
+  
+  .skeleton-card {
+    padding: var(--space-4);
+  }
+  
+  .skeleton-image,
+  .skeleton-video {
+    height: 150px;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .skeleton,
+  .skeleton-line,
+  .skeleton-code-line,
+  .skeleton-card-header,
+  .skeleton-card-title,
+  .skeleton-card-meta,
+  .skeleton-video-controls::before,
+  .skeleton-code-header::before {
+    animation: none;
+    background: var(--gray-200);
+  }
+  
+  .skeleton-placeholder {
+    animation: none;
+    opacity: 0.5;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .skeleton {
+    background: linear-gradient(
+      90deg,
+      var(--gray-700) 25%,
+      var(--gray-600) 50%,
+      var(--gray-700) 75%
+    );
+  }
+  
+  .skeleton-line,
+  .skeleton-code-line,
+  .skeleton-card-header,
+  .skeleton-card-title,
+  .skeleton-card-meta {
+    background: var(--gray-600);
+  }
+  
+  .skeleton-card {
+    background: var(--gray-800);
+    border-color: var(--gray-600);
+  }
+  
+  .skeleton-code-header {
+    background: var(--gray-700);
+    border-color: var(--gray-600);
+  }
+  
+  .skeleton-code-content {
+    background: var(--gray-800);
+  }
+}

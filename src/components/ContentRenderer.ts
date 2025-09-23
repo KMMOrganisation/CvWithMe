@@ -38,29 +38,101 @@ export class ContentRenderer {
           });
         },
         {
-          rootMargin: '50px 0px',
+          rootMargin: '100px 0px', // Increased for better preloading
           threshold: 0.1
         }
       );
     }
   }
 
-  private loadMedia(element: HTMLElement): void {
+  private async loadMedia(element: HTMLElement): Promise<void> {
     const dataSrc = element.getAttribute('data-src');
-    if (dataSrc) {
+    if (!dataSrc) return;
+
+    try {
       if (element.tagName === 'IMG') {
-        (element as HTMLImageElement).src = dataSrc;
-        element.removeAttribute('data-src');
-        element.classList.remove('lazy-loading');
-        element.classList.add('lazy-loaded');
+        const img = element as HTMLImageElement;
+        
+        // Show skeleton while loading
+        const skeleton = document.createElement('div');
+        skeleton.className = 'image-skeleton';
+        skeleton.innerHTML = '<div class="skeleton-placeholder">📷</div>';
+        img.parentNode?.insertBefore(skeleton, img);
+        
+        // Load image with performance optimizations
+        await this.loadImageOptimized(img, dataSrc);
+        
+        // Remove skeleton and show image
+        skeleton.remove();
+        img.classList.remove('lazy-loading');
+        img.classList.add('lazy-loaded');
+        
       } else if (element.tagName === 'VIDEO') {
         const video = element as HTMLVideoElement;
+        
+        // Show skeleton while loading
+        const skeleton = document.createElement('div');
+        skeleton.className = 'video-skeleton';
+        skeleton.innerHTML = '<div class="skeleton-placeholder">🎥</div>';
+        video.parentNode?.insertBefore(skeleton, video);
+        
+        // Load video
         video.src = dataSrc;
-        element.removeAttribute('data-src');
-        element.classList.remove('lazy-loading');
-        element.classList.add('lazy-loaded');
+        video.addEventListener('loadeddata', () => {
+          skeleton.remove();
+          video.classList.remove('lazy-loading');
+          video.classList.add('lazy-loaded');
+        }, { once: true });
       }
+      
+      element.removeAttribute('data-src');
+    } catch (error) {
+      console.error('Failed to load media:', error);
+      element.classList.add('lazy-error');
     }
+  }
+
+  private async loadImageOptimized(img: HTMLImageElement, src: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+      // Create a new image for preloading
+      const preloadImg = new Image();
+      
+      preloadImg.onload = () => {
+        // Check if we should use WebP format
+        const supportsWebP = this.supportsWebP();
+        const optimizedSrc = supportsWebP ? this.getWebPVersion(src) : src;
+        
+        img.src = optimizedSrc;
+        img.onload = () => resolve();
+        img.onerror = () => {
+          // Fallback to original if WebP fails
+          if (optimizedSrc !== src) {
+            img.src = src;
+            img.onload = () => resolve();
+            img.onerror = () => reject(new Error('Image failed to load'));
+          } else {
+            reject(new Error('Image failed to load'));
+          }
+        };
+      };
+      
+      preloadImg.onerror = () => reject(new Error('Image preload failed'));
+      preloadImg.src = src;
+    });
+  }
+
+  private supportsWebP(): boolean {
+    // Check if browser supports WebP
+    const canvas = document.createElement('canvas');
+    canvas.width = 1;
+    canvas.height = 1;
+    return canvas.toDataURL('image/webp').indexOf('data:image/webp') === 0;
+  }
+
+  private getWebPVersion(src: string): string {
+    // Convert image URL to WebP version if available
+    // This would depend on your image serving strategy
+    return src.replace(/\.(jpg|jpeg|png)$/i, '.webp');
   }
 
   private renderTextContent(block: ContentBlock): HTMLElement {
@@ -95,18 +167,49 @@ export class ContentRenderer {
     img.style.minHeight = '200px';
     img.style.display = 'block';
 
-    // Set up error handling
-    img.onerror = () => {
+    // Enhanced error handling with retry mechanism
+    let retryCount = 0;
+    const maxRetries = 2;
+    
+    const handleImageError = () => {
+      if (retryCount < maxRetries) {
+        retryCount++;
+        console.warn(`Image load failed, retrying (${retryCount}/${maxRetries}):`, block.content);
+        
+        // Try again after a short delay
+        setTimeout(() => {
+          img.src = block.content + `?retry=${retryCount}&t=${Date.now()}`;
+        }, 1000 * retryCount);
+        return;
+      }
+      
+      // All retries failed, show error fallback
       img.style.display = 'none';
       const errorDiv = document.createElement('div');
-      errorDiv.className = 'content-error';
+      errorDiv.className = 'content-error media-error';
       errorDiv.innerHTML = `
         <div class="error-icon">📷</div>
         <p>Image could not be loaded</p>
         <small>${block.metadata?.alt || 'No description available'}</small>
+        <button class="error-retry-btn" data-action="retry-image">
+          <span class="retry-icon">🔄</span>
+          Try Again
+        </button>
       `;
+      
+      // Add retry button functionality
+      const retryBtn = errorDiv.querySelector('.error-retry-btn') as HTMLButtonElement;
+      retryBtn.addEventListener('click', () => {
+        errorDiv.remove();
+        img.style.display = 'block';
+        retryCount = 0;
+        img.src = block.content + `?manual-retry=${Date.now()}`;
+      });
+      
       figure.appendChild(errorDiv);
     };
+
+    img.onerror = handleImageError;
 
     figure.appendChild(img);
 
@@ -151,18 +254,60 @@ export class ContentRenderer {
     // Add accessibility attributes
     video.setAttribute('aria-label', block.metadata?.caption || 'Video content');
 
-    // Set up error handling
-    video.onerror = () => {
+    // Enhanced error handling with retry mechanism
+    let retryCount = 0;
+    const maxRetries = 2;
+    
+    const handleVideoError = () => {
+      if (retryCount < maxRetries) {
+        retryCount++;
+        console.warn(`Video load failed, retrying (${retryCount}/${maxRetries}):`, block.content);
+        
+        // Try again after a short delay
+        setTimeout(() => {
+          video.src = block.content + `?retry=${retryCount}&t=${Date.now()}`;
+          video.load();
+        }, 1500 * retryCount);
+        return;
+      }
+      
+      // All retries failed, show error fallback
       video.style.display = 'none';
       const errorDiv = document.createElement('div');
-      errorDiv.className = 'content-error';
+      errorDiv.className = 'content-error media-error';
       errorDiv.innerHTML = `
         <div class="error-icon">🎥</div>
         <p>Video could not be loaded</p>
         <small>${block.metadata?.caption || 'No description available'}</small>
+        <button class="error-retry-btn" data-action="retry-video">
+          <span class="retry-icon">🔄</span>
+          Try Again
+        </button>
+        <div class="error-details">
+          <p>This might be due to:</p>
+          <ul>
+            <li>Network connectivity issues</li>
+            <li>Unsupported video format</li>
+            <li>File not found on server</li>
+          </ul>
+        </div>
       `;
+      
+      // Add retry button functionality
+      const retryBtn = errorDiv.querySelector('.error-retry-btn') as HTMLButtonElement;
+      retryBtn.addEventListener('click', () => {
+        errorDiv.remove();
+        video.style.display = 'block';
+        retryCount = 0;
+        video.src = block.content + `?manual-retry=${Date.now()}`;
+        video.load();
+      });
+      
       figure.appendChild(errorDiv);
     };
+
+    video.onerror = handleVideoError;
+    video.addEventListener('error', handleVideoError);
 
     figure.appendChild(video);
 
@@ -205,18 +350,67 @@ export class ContentRenderer {
     img.style.minHeight = '200px';
     img.style.display = 'block';
 
-    // Set up error handling
-    img.onerror = () => {
+    // Enhanced error handling with retry mechanism
+    let retryCount = 0;
+    const maxRetries = 2;
+    
+    const handleGifError = () => {
+      if (retryCount < maxRetries) {
+        retryCount++;
+        console.warn(`GIF load failed, retrying (${retryCount}/${maxRetries}):`, block.content);
+        
+        // Try again after a short delay
+        setTimeout(() => {
+          img.src = block.content + `?retry=${retryCount}&t=${Date.now()}`;
+        }, 1000 * retryCount);
+        return;
+      }
+      
+      // All retries failed, show error fallback with static image option
       img.style.display = 'none';
       const errorDiv = document.createElement('div');
-      errorDiv.className = 'content-error';
+      errorDiv.className = 'content-error media-error';
       errorDiv.innerHTML = `
         <div class="error-icon">🎬</div>
         <p>Animation could not be loaded</p>
         <small>${block.metadata?.alt || 'No description available'}</small>
+        <div class="error-actions">
+          <button class="error-retry-btn" data-action="retry-gif">
+            <span class="retry-icon">🔄</span>
+            Try Again
+          </button>
+          <button class="error-fallback-btn" data-action="show-static">
+            <span class="static-icon">📷</span>
+            Show Static Image
+          </button>
+        </div>
       `;
+      
+      // Add retry button functionality
+      const retryBtn = errorDiv.querySelector('.error-retry-btn') as HTMLButtonElement;
+      retryBtn.addEventListener('click', () => {
+        errorDiv.remove();
+        img.style.display = 'block';
+        retryCount = 0;
+        img.src = block.content + `?manual-retry=${Date.now()}`;
+      });
+      
+      // Add static image fallback
+      const staticBtn = errorDiv.querySelector('.error-fallback-btn') as HTMLButtonElement;
+      staticBtn.addEventListener('click', () => {
+        const staticSrc = block.content.replace(/\.gif$/i, '.jpg').replace(/\.gif$/i, '.png');
+        if (staticSrc !== block.content) {
+          errorDiv.remove();
+          img.style.display = 'block';
+          img.src = staticSrc;
+          img.alt = (block.metadata?.alt || 'Static image') + ' (static version)';
+        }
+      });
+      
       figure.appendChild(errorDiv);
     };
+
+    img.onerror = handleGifError;
 
     figure.appendChild(img);
 

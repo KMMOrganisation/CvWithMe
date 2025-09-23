@@ -1,6 +1,6 @@
 import { ModulePage } from './ModulePage.js';
 import { getAllModules } from '../data/index.js';
-import { Module, Lesson } from '../data/types/index.js';
+import { Lesson } from '../data/types/index.js';
 
 /**
  * Test function to demonstrate the ModulePage component

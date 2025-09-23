@@ -73,6 +73,114 @@ p {
   line-height: var(--leading-relaxed);
 }
 
+/* Mobile typography improvements */
+@media (max-width: 768px) {
+  body {
+    font-size: var(--text-sm);
+    line-height: var(--leading-relaxed);
+  }
+  
+  h1 { 
+    font-size: var(--text-3xl);
+    margin-bottom: var(--space-4);
+  }
+  
+  h2 { 
+    font-size: var(--text-2xl);
+    margin-bottom: var(--space-4);
+  }
+  
+  h3 { 
+    font-size: var(--text-xl);
+    margin-bottom: var(--space-3);
+  }
+  
+  h4 { 
+    font-size: var(--text-lg);
+    margin-bottom: var(--space-3);
+  }
+  
+  h5 { 
+    font-size: var(--text-base);
+    margin-bottom: var(--space-2);
+  }
+  
+  h6 { 
+    font-size: var(--text-sm);
+    margin-bottom: var(--space-2);
+  }
+  
+  p {
+    margin-bottom: var(--space-3);
+    max-width: none; /* Allow full width on mobile */
+  }
+  
+  .lead {
+    font-size: var(--text-base);
+  }
+  
+  ul, ol {
+    margin-bottom: var(--space-3);
+    padding-left: var(--space-4);
+  }
+  
+  li {
+    margin-bottom: var(--space-1);
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    font-size: var(--text-sm);
+  }
+  
+  h1 { 
+    font-size: var(--text-2xl);
+    margin-bottom: var(--space-3);
+  }
+  
+  h2 { 
+    font-size: var(--text-xl);
+    margin-bottom: var(--space-3);
+  }
+  
+  h3 { 
+    font-size: var(--text-lg);
+    margin-bottom: var(--space-2);
+  }
+  
+  h4 { 
+    font-size: var(--text-base);
+    margin-bottom: var(--space-2);
+  }
+  
+  h5, h6 { 
+    font-size: var(--text-sm);
+    margin-bottom: var(--space-2);
+  }
+  
+  p {
+    margin-bottom: var(--space-2);
+  }
+  
+  .lead {
+    font-size: var(--text-sm);
+  }
+  
+  code {
+    font-size: 0.8em;
+    padding: 2px var(--space-1);
+  }
+  
+  pre {
+    padding: var(--space-2);
+    margin-bottom: var(--space-3);
+    font-size: var(--text-xs);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
 /* Links */
 a {
   color: var(--primary-700);

@@ -2,6 +2,7 @@
 @import './reset.css';
 @import './variables.css';
 @import './base.css';
+@import './accessibility.css';
 @import './components.css';
 @import './navigation.css';
 @import './module-card.css';
@@ -10,4 +11,8 @@
 @import './module-page.css';
 @import './lesson-page.css';
 @import './content-renderer.css';
+@import './progress-indicator.css';
 @import './utilities.css';
+@import './mobile-optimizations.css';
+@import './skeleton.css';
+@import './error-boundary.css';

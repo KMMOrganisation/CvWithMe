@@ -219,7 +219,7 @@ export class ModulePage {
 
       // Add keyboard support
       button.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
+        if ((e as KeyboardEvent).key === 'Enter' || (e as KeyboardEvent).key === ' ') {
           e.preventDefault();
           (e.currentTarget as HTMLElement).click();
         }
@@ -283,8 +283,8 @@ export class ModulePage {
     // Update individual lesson cards
     if (lessonProgress) {
       this.props.module.lessons.forEach(lesson => {
-        const progress = lessonProgress.get(lesson.id) || 0;
-        const lessonCard = this.element.querySelector(`[data-lesson-id="${lesson.id}"]`);
+        lessonProgress.get(lesson.id) || 0;
+        this.element.querySelector(`[data-lesson-id="${lesson.id}"]`);
         // Note: This would require adding data attributes to lesson cards
         // For now, we'll re-render the lesson cards if needed
       });

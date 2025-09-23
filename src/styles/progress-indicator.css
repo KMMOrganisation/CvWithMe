@@ -1,0 +1,305 @@
+/**
+ * Progress Indicator Styles
+ * 
+ * Visual styles for progress bars, completion states, and lesson dots
+ */
+
+.progress-indicator {
+  --progress-track-color: var(--gray-200);
+  --progress-fill-color: var(--primary-500);
+  --progress-complete-color: var(--success);
+  --progress-text-color: var(--gray-700);
+  --progress-dot-size: 24px;
+  --progress-dot-spacing: 8px;
+  
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+/* Progress Label */
+.progress-label {
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--progress-text-color);
+  margin-bottom: var(--space-1);
+}
+
+/* Progress Bar Container */
+.progress-bar-container {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.progress-bar-track {
+  flex: 1;
+  height: 8px;
+  background-color: var(--progress-track-color);
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background-color: var(--progress-fill-color);
+  border-radius: 4px;
+  transition: width 0.3s ease-out;
+  position: relative;
+}
+
+.progress-bar-fill.animated {
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.progress-bar-fill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  animation: shimmer 2s infinite;
+  opacity: 0;
+}
+
+.progress-bar-fill.animated::after {
+  opacity: 1;
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Progress Text */
+.progress-text {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+  color: var(--progress-text-color);
+  white-space: nowrap;
+}
+
+.progress-percentage {
+  font-weight: 600;
+  color: var(--progress-fill-color);
+}
+
+.progress-fraction {
+  font-weight: 500;
+}
+
+/* Size Variants */
+.progress-indicator--small .progress-bar-track {
+  height: 4px;
+}
+
+.progress-indicator--small .progress-text {
+  font-size: var(--text-xs);
+}
+
+.progress-indicator--medium .progress-bar-track {
+  height: 8px;
+}
+
+.progress-indicator--large .progress-bar-track {
+  height: 12px;
+}
+
+.progress-indicator--large .progress-text {
+  font-size: var(--text-base);
+}
+
+/* Type Variants */
+.progress-indicator--module {
+  --progress-fill-color: var(--primary-600);
+}
+
+.progress-indicator--lesson {
+  --progress-fill-color: var(--accent-500);
+}
+
+.progress-indicator--overall {
+  --progress-fill-color: var(--primary-700);
+}
+
+/* Complete State */
+.progress-indicator--complete .progress-bar-fill {
+  background-color: var(--progress-complete-color);
+}
+
+.progress-indicator--complete .progress-percentage {
+  color: var(--progress-complete-color);
+}
+
+/* Lesson Dots */
+.lesson-dots {
+  display: flex;
+  align-items: center;
+  gap: var(--progress-dot-spacing);
+  margin-top: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.lesson-dot {
+  width: var(--progress-dot-size);
+  height: var(--progress-dot-size);
+  border-radius: 50%;
+  background-color: var(--progress-track-color);
+  border: 2px solid var(--progress-track-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: all 0.2s ease;
+  cursor: default;
+}
+
+.lesson-dot-number {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--gray-500);
+  line-height: 1;
+}
+
+.lesson-dot.completed {
+  background-color: var(--progress-complete-color);
+  border-color: var(--progress-complete-color);
+}
+
+.lesson-dot.completed .lesson-dot-number {
+  color: white;
+}
+
+.lesson-dot.completed::after {
+  content: '✓';
+  position: absolute;
+  font-size: 12px;
+  color: white;
+  font-weight: bold;
+}
+
+.lesson-dot.completed .lesson-dot-number {
+  opacity: 0;
+}
+
+.lesson-dot.current {
+  background-color: var(--progress-fill-color);
+  border-color: var(--progress-fill-color);
+  transform: scale(1.1);
+  box-shadow: 0 0 0 3px rgba(var(--primary-500-rgb), 0.2);
+}
+
+.lesson-dot.current .lesson-dot-number {
+  color: white;
+}
+
+/* Hover Effects */
+.lesson-dot:hover {
+  transform: scale(1.05);
+}
+
+.lesson-dot.current:hover {
+  transform: scale(1.15);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .progress-bar-container {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-2);
+  }
+  
+  .progress-text {
+    justify-content: space-between;
+  }
+  
+  .lesson-dots {
+    justify-content: center;
+  }
+  
+  .lesson-dot {
+    --progress-dot-size: 20px;
+    --progress-dot-spacing: 6px;
+  }
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+  .progress-indicator {
+    --progress-track-color: var(--gray-700);
+    --progress-text-color: var(--gray-300);
+  }
+  
+  .lesson-dot-number {
+    color: var(--gray-400);
+  }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+  .progress-bar-track {
+    border: 1px solid var(--gray-600);
+  }
+  
+  .progress-bar-fill {
+    border: 1px solid var(--progress-fill-color);
+  }
+  
+  .lesson-dot {
+    border-width: 3px;
+  }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .progress-bar-fill,
+  .lesson-dot {
+    transition: none;
+  }
+  
+  .progress-bar-fill::after {
+    animation: none;
+  }
+}
+
+/* Focus Styles for Accessibility */
+.lesson-dot:focus {
+  outline: 2px solid var(--primary-500);
+  outline-offset: 2px;
+}
+
+/* Loading State */
+.progress-indicator--loading .progress-bar-fill {
+  background: linear-gradient(
+    90deg,
+    var(--progress-track-color),
+    var(--progress-fill-color),
+    var(--progress-track-color)
+  );
+  background-size: 200% 100%;
+  animation: loading-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes loading-pulse {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}

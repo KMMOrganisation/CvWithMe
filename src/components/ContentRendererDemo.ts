@@ -4,7 +4,7 @@
  * Demonstrates the ContentRenderer component with various content types
  */
 
-import { ContentRenderer, ContentRendererProps } from './ContentRenderer.js';
+import { ContentRenderer } from './ContentRenderer.js';
 import { ContentBlock } from '../data/types/index.js';
 
 // Sample content blocks for demonstration

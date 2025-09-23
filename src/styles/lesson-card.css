@@ -383,3 +383,35 @@
 .lesson-card--in-progress .lesson-card__title {
   color: var(--primary-900);
 }
+/* Com
+pleted state */
+.lesson-card--completed {
+  border-color: var(--success);
+  background: linear-gradient(135deg, var(--gray-50) 0%, rgba(16, 185, 129, 0.05) 100%);
+}
+
+.lesson-card--completed .lesson-card__title {
+  color: var(--success);
+}
+
+.lesson-card--completed .lesson-card__cta {
+  color: var(--success);
+}
+
+/* Completion indicator */
+.lesson-card__completion {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  background: var(--success);
+  color: white;
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
+  font-weight: 500;
+}
+
+.lesson-card__completion-icon {
+  font-size: var(--text-base);
+  font-weight: bold;
+}

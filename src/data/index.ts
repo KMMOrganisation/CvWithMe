@@ -75,6 +75,23 @@ export function getLesson(lessonId: number): Module['lessons'][0] | undefined {
 }
 
 /**
+ * Gets a module by its slug
+ */
+export function getModuleBySlug(slug: string): Module | undefined {
+  return getCurrentModules().find(module => module.slug === slug);
+}
+
+/**
+ * Gets a lesson by its slug within a specific module
+ */
+export function getLessonBySlug(moduleId: number, lessonSlug: string): Module['lessons'][0] | undefined {
+  const module = getModule(moduleId);
+  if (!module) return undefined;
+  
+  return module.lessons.find(lesson => lesson.slug === lessonSlug);
+}
+
+/**
  * Gets course statistics
  */
 export function getCourseStats() {

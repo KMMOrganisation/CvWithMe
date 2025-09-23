@@ -1,0 +1,466 @@
+/**
+ * 404 Not Found Page Styles
+ * 
+ * Styles for the 404 error page with helpful navigation
+ */
+
+.not-found-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-8);
+  background: linear-gradient(135deg, var(--gray-50) 0%, var(--primary-50) 100%);
+}
+
+.not-found-content {
+  max-width: 800px;
+  width: 100%;
+  text-align: center;
+  background: white;
+  border-radius: 12px;
+  padding: var(--space-12);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+/* Header Section */
+.not-found-header {
+  margin-bottom: var(--space-8);
+}
+
+.not-found-icon {
+  font-size: 4rem;
+  margin-bottom: var(--space-4);
+  opacity: 0.8;
+}
+
+.not-found-title {
+  font-size: var(--text-4xl);
+  font-weight: 700;
+  color: var(--gray-900);
+  margin-bottom: var(--space-2);
+}
+
+.not-found-code {
+  font-size: var(--text-6xl);
+  font-weight: 900;
+  color: var(--primary-500);
+  opacity: 0.3;
+  font-family: var(--font-mono);
+  line-height: 1;
+}
+
+/* Message Section */
+.not-found-message {
+  margin-bottom: var(--space-8);
+}
+
+.primary-message {
+  font-size: var(--text-xl);
+  color: var(--gray-700);
+  margin-bottom: var(--space-3);
+  font-weight: 500;
+}
+
+.suggestion-message {
+  font-size: var(--text-base);
+  color: var(--gray-600);
+  line-height: var(--leading-relaxed);
+  margin-bottom: var(--space-4);
+}
+
+.requested-path {
+  font-size: var(--text-sm);
+  color: var(--gray-500);
+  margin-top: var(--space-3);
+}
+
+.requested-path code {
+  background: var(--gray-100);
+  padding: var(--space-1) var(--space-2);
+  border-radius: 4px;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--gray-700);
+}
+
+/* Suggestions Section */
+.not-found-suggestions {
+  margin-bottom: var(--space-8);
+  text-align: left;
+}
+
+.not-found-suggestions h2 {
+  font-size: var(--text-2xl);
+  font-weight: 600;
+  color: var(--gray-900);
+  margin-bottom: var(--space-6);
+  text-align: center;
+}
+
+.suggestion-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--space-4);
+}
+
+.suggestion-card {
+  background: var(--gray-50);
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+  padding: var(--space-6);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.suggestion-card:hover {
+  background: var(--primary-50);
+  border-color: var(--primary-200);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.suggestion-card h3 {
+  font-size: var(--text-lg);
+  font-weight: 600;
+  color: var(--gray-900);
+  margin-bottom: var(--space-2);
+}
+
+.suggestion-card p {
+  font-size: var(--text-sm);
+  color: var(--gray-600);
+  line-height: var(--leading-normal);
+  margin-bottom: var(--space-3);
+}
+
+.suggestion-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: var(--text-xs);
+  color: var(--gray-500);
+}
+
+.lesson-count {
+  background: var(--primary-100);
+  color: var(--primary-700);
+  padding: var(--space-1) var(--space-2);
+  border-radius: 12px;
+  font-weight: 500;
+}
+
+.complexity {
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+/* Navigation Section */
+.not-found-navigation {
+  border-top: 1px solid var(--gray-200);
+  padding-top: var(--space-8);
+}
+
+.nav-buttons {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-4);
+  margin-bottom: var(--space-8);
+  flex-wrap: wrap;
+}
+
+.nav-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-6);
+  border-radius: 8px;
+  font-size: var(--text-base);
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 2px solid transparent;
+}
+
+.nav-btn.primary {
+  background: var(--primary-500);
+  color: white;
+}
+
+.nav-btn.primary:hover {
+  background: var(--primary-600);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.nav-btn.secondary {
+  background: white;
+  color: var(--gray-700);
+  border-color: var(--gray-300);
+}
+
+.nav-btn.secondary:hover {
+  background: var(--gray-50);
+  border-color: var(--gray-400);
+  transform: translateY(-1px);
+}
+
+.nav-btn:focus {
+  outline: 2px solid var(--primary-500);
+  outline-offset: 2px;
+}
+
+.btn-icon {
+  font-size: var(--text-lg);
+}
+
+/* Help Section */
+.help-section {
+  text-align: center;
+}
+
+.help-section h3 {
+  font-size: var(--text-lg);
+  font-weight: 600;
+  color: var(--gray-900);
+  margin-bottom: var(--space-4);
+}
+
+.help-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  gap: var(--space-6);
+  flex-wrap: wrap;
+}
+
+.help-links a {
+  color: var(--primary-600);
+  text-decoration: none;
+  font-size: var(--text-sm);
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.help-links a:hover {
+  color: var(--primary-700);
+  text-decoration: underline;
+}
+
+/* Error Fallback */
+.error-fallback {
+  text-align: center;
+  padding: var(--space-8);
+  background: var(--gray-50);
+  border-radius: 8px;
+  border: 1px solid var(--gray-200);
+}
+
+.error-fallback h2 {
+  color: var(--gray-900);
+  margin-bottom: var(--space-4);
+}
+
+.error-fallback p {
+  color: var(--gray-600);
+  margin-bottom: var(--space-6);
+}
+
+.error-fallback button {
+  background: var(--primary-500);
+  color: white;
+  border: none;
+  padding: var(--space-3) var(--space-6);
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.error-fallback button:hover {
+  background: var(--primary-600);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .not-found-page {
+    padding: var(--space-4);
+  }
+  
+  .not-found-content {
+    padding: var(--space-8);
+  }
+  
+  .not-found-icon {
+    font-size: 3rem;
+  }
+  
+  .not-found-title {
+    font-size: var(--text-3xl);
+  }
+  
+  .not-found-code {
+    font-size: var(--text-5xl);
+  }
+  
+  .primary-message {
+    font-size: var(--text-lg);
+  }
+  
+  .suggestion-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .nav-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .nav-btn {
+    width: 100%;
+    max-width: 280px;
+    justify-content: center;
+  }
+  
+  .help-links {
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+}
+
+@media (max-width: 480px) {
+  .not-found-content {
+    padding: var(--space-6);
+  }
+  
+  .not-found-icon {
+    font-size: 2.5rem;
+  }
+  
+  .not-found-title {
+    font-size: var(--text-2xl);
+  }
+  
+  .not-found-code {
+    font-size: var(--text-4xl);
+  }
+  
+  .suggestion-card {
+    padding: var(--space-4);
+  }
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+  .not-found-page {
+    background: linear-gradient(135deg, var(--gray-900) 0%, var(--gray-800) 100%);
+  }
+  
+  .not-found-content {
+    background: var(--gray-800);
+    color: var(--gray-100);
+  }
+  
+  .not-found-title {
+    color: var(--gray-100);
+  }
+  
+  .primary-message {
+    color: var(--gray-200);
+  }
+  
+  .suggestion-message {
+    color: var(--gray-300);
+  }
+  
+  .requested-path {
+    color: var(--gray-400);
+  }
+  
+  .requested-path code {
+    background: var(--gray-700);
+    color: var(--gray-200);
+  }
+  
+  .not-found-suggestions h2 {
+    color: var(--gray-100);
+  }
+  
+  .suggestion-card {
+    background: var(--gray-700);
+    border-color: var(--gray-600);
+  }
+  
+  .suggestion-card:hover {
+    background: var(--gray-600);
+    border-color: var(--primary-400);
+  }
+  
+  .suggestion-card h3 {
+    color: var(--gray-100);
+  }
+  
+  .suggestion-card p {
+    color: var(--gray-300);
+  }
+  
+  .nav-btn.secondary {
+    background: var(--gray-700);
+    color: var(--gray-200);
+    border-color: var(--gray-600);
+  }
+  
+  .nav-btn.secondary:hover {
+    background: var(--gray-600);
+    border-color: var(--gray-500);
+  }
+  
+  .help-section h3 {
+    color: var(--gray-100);
+  }
+  
+  .error-fallback {
+    background: var(--gray-700);
+    border-color: var(--gray-600);
+  }
+  
+  .error-fallback h2 {
+    color: var(--gray-100);
+  }
+  
+  .error-fallback p {
+    color: var(--gray-300);
+  }
+}
+
+/* Accessibility Improvements */
+@media (prefers-reduced-motion: reduce) {
+  .suggestion-card,
+  .nav-btn {
+    transition: none;
+  }
+  
+  .suggestion-card:hover,
+  .nav-btn:hover {
+    transform: none;
+  }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+  .not-found-content {
+    border: 2px solid currentColor;
+  }
+  
+  .suggestion-card {
+    border-width: 2px;
+  }
+  
+  .nav-btn {
+    border-width: 2px;
+  }
+}
