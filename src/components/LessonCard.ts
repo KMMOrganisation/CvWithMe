@@ -22,7 +22,7 @@ export class LessonCard {
     
     // Create main card element
     const card = document.createElement('article');
-    card.className = `lesson-card ${isCompleted ? 'lesson-card--completed' : ''}`;
+    card.className = `lesson-card card-enhanced hover-lift focus-enhanced interactive scroll-reveal ${isCompleted ? 'lesson-card--completed' : ''}`;
     card.setAttribute('role', 'button');
     card.setAttribute('tabindex', '0');
     

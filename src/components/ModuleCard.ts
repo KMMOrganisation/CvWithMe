@@ -24,7 +24,7 @@ export class ModuleCard {
     
     // Create main card element
     const card = document.createElement('article');
-    card.className = 'module-card';
+    card.className = 'module-card card-enhanced hover-lift focus-enhanced interactive scroll-reveal';
     card.setAttribute('role', 'button');
     card.setAttribute('tabindex', '0');
     

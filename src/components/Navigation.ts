@@ -1,10 +1,12 @@
 import { NavigationProps } from '../data/types/index.js';
 import { FocusManager, KeyboardNavigationHandler, accessibilityManager } from '../utils/accessibility.js';
+import { SearchComponent } from './SearchComponent.js';
 
 export class Navigation {
   private element: HTMLElement;
   private props: NavigationProps;
   private isMenuOpen = false;
+  private searchComponent?: SearchComponent;
 
   private keyboardHandler?: KeyboardNavigationHandler;
   private focusTrap?: () => void;
@@ -15,6 +17,7 @@ export class Navigation {
     container.appendChild(this.element);
     this.setupEventListeners();
     this.setupKeyboardNavigation();
+    this.setupSearchComponent();
   }
 
   private createElement(): HTMLElement {
@@ -34,15 +37,15 @@ export class Navigation {
           </a>
         </div>
 
-        <!-- Desktop Navigation -->
-        <div class="nav-desktop">
-          ${this.renderModuleNavigation()}
-          ${this.renderBreadcrumbs()}
+        <!-- Simple Navigation Links -->
+        <div class="nav-links">
+          <a href="/" class="nav-link nav-item-enhanced">Home</a>
+          <a href="/?test=search" class="nav-link nav-item-enhanced">Search</a>
         </div>
 
         <!-- Mobile Menu Button -->
         <button 
-          class="nav-mobile-toggle" 
+          class="nav-mobile-toggle btn-enhanced focus-enhanced" 
           aria-label="Open navigation menu"
           aria-expanded="false"
           aria-controls="mobile-menu"
@@ -138,7 +141,7 @@ export class Navigation {
   private renderMobileNavigation(): string {
     return `
       <div class="nav-mobile-header">
-        <h2 class="nav-mobile-title" id="mobile-menu-title">Navigation Menu</h2>
+        <h2 class="nav-mobile-title" id="mobile-menu-title">Menu</h2>
         <button class="nav-mobile-close" aria-label="Close navigation menu">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
             <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
@@ -147,30 +150,14 @@ export class Navigation {
         </button>
       </div>
       
-      ${this.renderBreadcrumbs()}
+      <div class="nav-mobile-links">
+        <a href="/" class="nav-mobile-link">Home</a>
+        <a href="/?test=search" class="nav-mobile-link">Search</a>
+        <a href="/?test=module" class="nav-mobile-link">Modules</a>
+      </div>
       
-      <div class="nav-mobile-modules">
-        <h3 class="nav-mobile-section-title">Course Modules</h3>
-        <nav role="navigation" aria-label="Course modules">
-          ${this.props.modules.map(module => `
-            <a 
-              href="/module/${module.slug}" 
-              class="nav-mobile-module ${this.props.currentModule === module.id ? 'active' : ''}"
-              aria-describedby="mobile-module-${module.id}-desc"
-              ${this.props.currentModule === module.id ? 'aria-current="page"' : ''}
-            >
-              <div class="nav-mobile-module-info">
-                <span class="nav-mobile-module-title">${module.title}</span>
-                <span class="nav-mobile-module-meta" id="mobile-module-${module.id}-desc">
-                  ${module.lessons.length} lesson${module.lessons.length !== 1 ? 's' : ''} • ${module.estimatedTime}
-                </span>
-              </div>
-              <span class="badge badge-${module.complexity.toLowerCase()}" aria-label="Complexity: ${module.complexity}">
-                ${module.complexity}
-              </span>
-            </a>
-          `).join('')}
-        </nav>
+      <div class="nav-mobile-search" id="nav-mobile-search-container">
+        <!-- Mobile search component will be inserted here -->
       </div>
     `;
   }
@@ -309,6 +296,23 @@ export class Navigation {
     });
   }
 
+  private setupSearchComponent(): void {
+    // Mobile search (in mobile menu)
+    const mobileSearchContainer = this.element.querySelector('#nav-mobile-search-container') as HTMLElement;
+    if (mobileSearchContainer) {
+      new SearchComponent(mobileSearchContainer, {
+        modules: this.props.modules,
+        placeholder: 'Search course content...',
+        showFilters: true,
+        onResultSelect: (result) => {
+          // Close mobile menu and navigate
+          this.closeMobileMenu();
+          window.location.href = result.url;
+        }
+      });
+    }
+  }
+
   private setupKeyboardNavigation(): void {
     // Find all focusable elements
     this.updateFocusableElements();
@@ -372,6 +376,14 @@ export class Navigation {
           accessibilityManager.announce(`${title}, ${meta}`, 'polite');
         }
       });
+    });
+
+    // Add keyboard shortcut for search (Ctrl+K or Cmd+K)
+    document.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        this.searchComponent?.focus();
+      }
     });
   }
 
@@ -484,6 +496,7 @@ export class Navigation {
       container.appendChild(this.element);
       this.setupEventListeners();
       this.setupKeyboardNavigation();
+      this.setupSearchComponent();
     }
   }
 
@@ -496,6 +509,11 @@ export class Navigation {
     // Clean up keyboard handler
     if (this.keyboardHandler) {
       accessibilityManager.unregisterKeyboardHandler('navigation-dropdown');
+    }
+    
+    // Clean up search component
+    if (this.searchComponent) {
+      this.searchComponent.destroy();
     }
     
     this.element.remove();

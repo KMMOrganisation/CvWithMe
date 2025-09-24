@@ -1,6 +1,5 @@
 import { Module } from '../data/types/index.js';
 import { ModuleCard } from '../components/ModuleCard.js';
-import { Navigation } from '../components/Navigation.js';
 import { progressNavigationManager } from '../utils/progressNavigationManager.js';
 
 export interface LandingPageProps {
@@ -23,13 +22,6 @@ export class LandingPage {
     this.props = props;
     this.element = this.createElement();
     
-    // Initialize navigation
-    new Navigation(container, {
-      modules: props.modules,
-      currentModule: undefined,
-      currentLesson: undefined
-    });
-    
     container.appendChild(this.element);
     this.initializeModuleCards();
     this.initializeSmoothScrolling();
@@ -41,11 +33,29 @@ export class LandingPage {
     page.className = 'landing-page';
     
     page.innerHTML = `
+      ${this.createSimpleHeader()}
       ${this.createHeroSection()}
       ${this.createModulesSection()}
     `;
 
     return page;
+  }
+
+  private createSimpleHeader(): string {
+    return `
+      <header class="simple-header">
+        <div class="simple-header-container">
+          <div class="simple-header-brand">
+            <span class="simple-header-icon">🎓</span>
+            <span class="simple-header-text">CV Tutorial</span>
+          </div>
+          <nav class="simple-header-nav">
+            <a href="/" class="simple-header-link">Home</a>
+            <a href="/?test=search" class="simple-header-link">Search</a>
+          </nav>
+        </div>
+      </header>
+    `;
   }
 
   private createHeroSection(): string {

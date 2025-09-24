@@ -2,6 +2,7 @@ import './styles/main.css'
 import './styles/skeleton.css'
 import './styles/error-boundary.css'
 import './styles/not-found.css'
+import { animationUtils } from './utils/animationUtils.js'
 import { initializeCourseData, getAllModules, getCourseStats } from './data/index.js'
 import { LandingPage } from './pages/LandingPage.js'
 import { testCourseParser } from './utils/test-course-parser.js'
@@ -12,6 +13,8 @@ import { createProgressTrackingTest } from './components/test-progress-tracking.
 import { createAccessibilityTest } from './components/test-accessibility.js'
 import { createPerformanceTest } from './components/test-performance.js'
 import { createErrorHandlingTest } from './components/test-error-handling.js'
+import { createSearchTest } from './components/test-search.js'
+import { createUXEnhancementsTest } from './components/test-ux-enhancements.js'
 import { progressNavigationManager } from './utils/progressNavigationManager.js'
 import { HeadingHierarchy } from './utils/accessibility.js'
 import { createErrorBoundary } from './utils/errorBoundary.js'
@@ -98,8 +101,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Initialize the course data first
     await initializeApp()
     
-    // Hide skeleton
+    // Hide skeleton with animation
     skeleton.hide()
+    
+    // Initialize animation utilities
+    animationUtils.initializeAll()
+    console.log('✅ Animation utilities initialized with scroll reveals and micro-interactions')
     
     // Get modules from the initialized data
     const currentModules = getAllModules()
@@ -136,6 +143,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Test the error handling and fallback content
     console.log('🧪 Running Error Handling tests...')
     createErrorHandlingTest()
+  } else if (testPage === 'search') {
+    // Test the search and filtering functionality
+    console.log('🧪 Running Search and Filtering tests...')
+    createSearchTest()
+  } else if (testPage === 'ux') {
+    // Test the UX enhancements including animations and micro-interactions
+    console.log('🧪 Running UX Enhancements tests...')
+    createUXEnhancementsTest()
   } else {
     // Create and initialize the landing page (default)
     new LandingPage(app, {
@@ -179,6 +194,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.log('   - ?test=accessibility (Accessibility Features test)')
     console.log('   - ?test=performance (Performance Optimization tests)')
     console.log('   - ?test=errors (Error Handling and Fallback Content tests)')
+    console.log('   - ?test=search (Search and Filtering functionality tests)')
+    console.log('   - ?test=ux (UX Enhancements: animations, micro-interactions, visual polish)')
   }
   
   } catch (error) {

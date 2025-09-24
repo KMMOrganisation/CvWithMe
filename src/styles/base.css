@@ -16,6 +16,20 @@ body {
   font-weight: 400;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  padding-top: 4rem; /* Add padding for fixed navbar */
+}
+
+/* Responsive body padding for navbar */
+@media (max-width: 768px) {
+  body {
+    padding-top: 3.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    padding-top: 3.25rem;
+  }
 }
 
 /* Typography Hierarchy */
