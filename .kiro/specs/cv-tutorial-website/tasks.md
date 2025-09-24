@@ -119,7 +119,7 @@
   - Add error boundaries and graceful error handling
   - _Requirements: 3.4, 3.5_
 
-- [-] 16. Create error handling and fallback content
+- [x] 16. Create error handling and fallback content
   - Implement 404 pages with helpful navigation
   - Add fallback content for missing media
   - Create error states for failed content loading
@@ -127,7 +127,7 @@
   - Implement graceful degradation for older browsers
   - _Requirements: 3.5_
 
-- [ ] 17. Set up content management system
+- [-] 17. Set up content management system
   - Create markdown-based content structure
   - Implement content parsing and validation
   - Add support for frontmatter metadata in lessons

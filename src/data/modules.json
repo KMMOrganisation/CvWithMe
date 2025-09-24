@@ -1,12 +1,4 @@
-// This file is auto-generated from markdown content during build
-// Do not edit manually - changes will be overwritten
-
-import { Module } from './types/index.js';
-
-/**
- * Course modules loaded from markdown content
- */
-export const COURSE_MODULES: Module[] = [
+[
   {
     "id": 1,
     "title": "Your First Lines of Code - Setting Up for Success",
@@ -528,49 +520,4 @@ export const COURSE_MODULES: Module[] = [
     ],
     "order": 1
   }
-];
-
-/**
- * Get all modules
- */
-export function getAllModules(): Module[] {
-  return COURSE_MODULES;
-}
-
-/**
- * Get module by ID
- */
-export function getModuleById(id: number): Module | undefined {
-  return COURSE_MODULES.find(module => module.id === id);
-}
-
-/**
- * Get module by slug
- */
-export function getModuleBySlug(slug: string): Module | undefined {
-  return COURSE_MODULES.find(module => module.slug === slug);
-}
-
-/**
- * Get lesson by ID
- */
-export function getLessonById(lessonId: number): { module: Module; lesson: any } | undefined {
-  for (const module of COURSE_MODULES) {
-    const lesson = module.lessons.find(l => l.id === lessonId);
-    if (lesson) {
-      return { module, lesson };
-    }
-  }
-  return undefined;
-}
-
-/**
- * Course metadata
- */
-export const COURSE_METADATA = {
-  title: "Code Your Dream Portfolio: From Zero to Web Hero!",
-  description: "Ready to build your very own online portfolio, even if you've never written a line of code?",
-  totalModules: 1,
-  totalLessons: 2,
-  lastUpdated: "2025-09-24T12:09:02.701Z"
-};
+]

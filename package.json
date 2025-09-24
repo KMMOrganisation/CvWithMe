@@ -5,7 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "npm run build:content && tsc && vite build",
+    "build:content": "node scripts/buildContent.js",
+    "build:content:watch": "node scripts/buildContent.js --watch",
+    "validate:content": "node scripts/buildContent.js --validate-only",
     "preview": "vite preview"
   },
   "devDependencies": {
