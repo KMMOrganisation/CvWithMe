@@ -127,7 +127,7 @@
   - Implement graceful degradation for older browsers
   - _Requirements: 3.5_
 
-- [-] 17. Set up content management system
+- [x] 17. Set up content management system
   - Create markdown-based content structure
   - Implement content parsing and validation
   - Add support for frontmatter metadata in lessons
