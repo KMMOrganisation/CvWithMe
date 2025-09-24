@@ -304,4 +304,218 @@
     transform: none;
     box-shadow: none;
   }
+}/* Quick 
+Access Features */
+.module-card__actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.module-card__primary-action {
+  /* Keep existing action styles */
+}
+
+.module-card__quick-actions {
+  display: flex !important;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+  background: rgba(255, 0, 0, 0.1); /* Temporary debug background */
+  padding: var(--space-2);
+  border: 1px solid red; /* Temporary debug border */
+}
+
+.module-card__quick-start-btn,
+.module-card__toggle-lessons {
+  background: var(--primary-100);
+  color: var(--primary-700);
+  border: 1px solid var(--primary-200);
+  border-radius: var(--radius-md);
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  flex: 1;
+  justify-content: center;
+}
+
+.module-card__quick-start-btn:hover,
+.module-card__toggle-lessons:hover {
+  background: var(--primary-200);
+  border-color: var(--primary-300);
+  transform: translateY(-1px);
+}
+
+.module-card__quick-start-btn:active,
+.module-card__toggle-lessons:active {
+  transform: translateY(0);
+}
+
+.quick-start-icon,
+.toggle-icon {
+  font-size: var(--text-base);
+}
+
+.toggle-arrow {
+  font-size: var(--text-xs);
+  transition: transform var(--transition-fast);
+}
+
+/* Lessons Preview */
+.module-card__lessons-preview {
+  margin-top: var(--space-4);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--gray-200);
+  animation: slideDown 0.3s ease-out;
+}
+
+.lessons-preview__header h4 {
+  margin: 0 0 var(--space-3) 0;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--gray-700);
+}
+
+.lessons-preview__list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.lessons-preview__item {
+  margin: 0;
+}
+
+.lesson-preview-btn {
+  width: 100%;
+  background: var(--gray-50);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  text-align: left;
+}
+
+.lesson-preview-btn:hover {
+  background: var(--primary-50);
+  border-color: var(--primary-200);
+  transform: translateX(2px);
+}
+
+.lesson-number {
+  font-weight: 600;
+  color: var(--primary-600);
+  min-width: 1.5rem;
+}
+
+.lesson-title {
+  flex: 1;
+  font-weight: 500;
+  color: var(--gray-800);
+  font-size: var(--text-sm);
+}
+
+.lesson-time {
+  font-size: var(--text-xs);
+  color: var(--gray-500);
+  white-space: nowrap;
+}
+
+.lesson-arrow {
+  color: var(--primary-500);
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+}
+
+.lesson-preview-btn:hover .lesson-arrow {
+  opacity: 1;
+}
+
+/* Expanded state */
+.module-card--expanded {
+  transform: scale(1.02);
+  box-shadow: var(--shadow-lg);
+  z-index: 10;
+  position: relative;
+}
+
+/* Animations */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .module-card__quick-actions {
+    flex-direction: column;
+  }
+  
+  .lesson-preview-btn {
+    padding: var(--space-2);
+  }
+  
+  .lesson-title {
+    font-size: var(--text-xs);
+  }
+  
+  .lesson-time {
+    display: none;
+  }
+}
+
+/* Focus states for accessibility */
+.module-card__quick-start-btn:focus,
+.module-card__toggle-lessons:focus,
+.lesson-preview-btn:focus {
+  outline: 2px solid var(--primary-500);
+  outline-offset: 2px;
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .module-card__quick-start-btn,
+  .module-card__toggle-lessons {
+    border-width: 2px;
+  }
+  
+  .lesson-preview-btn {
+    border-width: 2px;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .module-card__lessons-preview {
+    animation: none;
+  }
+  
+  .toggle-arrow {
+    transition: none;
+  }
+  
+  .module-card--expanded {
+    transform: none;
+  }
+  
+  .lesson-preview-btn:hover {
+    transform: none;
+  }
 }

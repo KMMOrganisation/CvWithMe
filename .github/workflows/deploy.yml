@@ -1,0 +1,119 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Validate content
+      run: npm run validate:content
+    
+    - name: Run tests
+      run: npm run test
+    
+    - name: Build project
+      run: npm run build
+      env:
+        NODE_ENV: production
+    
+    - name: Setup Pages
+      uses: actions/configure-pages@v4
+    
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: './dist'
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    
+    steps:
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v4
+
+  lighthouse:
+    runs-on: ubuntu-latest
+    needs: deploy
+    if: success()
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Wait for deployment
+      run: sleep 30
+    
+    - name: Run Lighthouse CI
+      run: |
+        npm install -g @lhci/cli@0.12.x
+        lhci autorun --upload.target=temporary-public-storage
+      env:
+        LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+        LHCI_BUILD_CONTEXT__CURRENT_HASH: ${{ github.sha }}
+        LHCI_BUILD_CONTEXT__COMMIT_TIME: ${{ github.event.head_commit.timestamp }}
+        LHCI_BUILD_CONTEXT__CURRENT_BRANCH: ${{ github.ref_name }}
+        LHCI_BUILD_CONTEXT__COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
+
+  notify:
+    runs-on: ubuntu-latest
+    needs: [deploy, lighthouse]
+    if: always()
+    
+    steps:
+    - name: Deployment Summary
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const deployStatus = '${{ needs.deploy.result }}';
+          const lighthouseStatus = '${{ needs.lighthouse.result }}';
+          
+          const summary = `## Deployment Summary 🚀
+          
+          **Deployment**: ${deployStatus === 'success' ? '✅ Success' : '❌ Failed'}
+          **Lighthouse**: ${lighthouseStatus === 'success' ? '✅ Completed' : lighthouseStatus === 'skipped' ? '⏭️ Skipped' : '❌ Failed'}
+          
+          ${deployStatus === 'success' ? '🎉 Site is live at: ${{ steps.deployment.outputs.page_url || github.event.repository.homepage }}' : ''}
+          `;
+          
+          core.summary.addRaw(summary);
+          core.summary.write();

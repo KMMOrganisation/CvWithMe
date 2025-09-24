@@ -5,16 +5,6 @@ import './styles/not-found.css'
 import { animationUtils } from './utils/animationUtils.js'
 import { initializeCourseData, getAllModules, getCourseStats } from './data/index.js'
 import { LandingPage } from './pages/LandingPage.js'
-import { testCourseParser } from './utils/test-course-parser.js'
-import { testModulePage } from './pages/test-module-page.js'
-import { createTestLessonPage } from './pages/test-lesson-page.js'
-import { runContentRendererTests } from './components/test-content-renderer.js'
-import { createProgressTrackingTest } from './components/test-progress-tracking.js'
-import { createAccessibilityTest } from './components/test-accessibility.js'
-import { createPerformanceTest } from './components/test-performance.js'
-import { createErrorHandlingTest } from './components/test-error-handling.js'
-import { createSearchTest } from './components/test-search.js'
-import { createUXEnhancementsTest } from './components/test-ux-enhancements.js'
 import { progressNavigationManager } from './utils/progressNavigationManager.js'
 import { HeadingHierarchy } from './utils/accessibility.js'
 import { createErrorBoundary } from './utils/errorBoundary.js'
@@ -60,10 +50,6 @@ async function initializeApp() {
     ]
     await ResourcePreloader.preloadCriticalResources(criticalResources)
     console.log('✅ Critical resources preloaded')
-    
-    // Test the course parser
-    console.log('🧪 Testing Course.md parser...')
-    await testCourseParser()
     
   } catch (error) {
     console.error('❌ Failed to initialize course data:', error)
@@ -111,48 +97,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Get modules from the initialized data
     const currentModules = getAllModules()
     
-    // Check URL parameters to determine which page to show
-    const urlParams = new URLSearchParams(window.location.search)
-    const testPage = urlParams.get('test')
-  
-  if (testPage === 'module') {
-    // Test the module page
-    console.log('🧪 Loading ModulePage test...')
-    await testModulePage()
-  } else if (testPage === 'lesson') {
-    // Test the lesson page with ContentRenderer
-    console.log('🧪 Loading LessonPage with ContentRenderer test...')
-    createTestLessonPage()
-  } else if (testPage === 'content') {
-    // Test the ContentRenderer component
-    console.log('🧪 Running ContentRenderer tests...')
-    runContentRendererTests()
-  } else if (testPage === 'progress') {
-    // Test the progress tracking system
-    console.log('🧪 Running Progress Tracking tests...')
-    createProgressTrackingTest()
-  } else if (testPage === 'accessibility') {
-    // Test the accessibility features
-    console.log('🧪 Running Accessibility tests...')
-    createAccessibilityTest(app)
-  } else if (testPage === 'performance') {
-    // Test the performance optimizations
-    console.log('🧪 Running Performance tests...')
-    createPerformanceTest()
-  } else if (testPage === 'errors') {
-    // Test the error handling and fallback content
-    console.log('🧪 Running Error Handling tests...')
-    createErrorHandlingTest()
-  } else if (testPage === 'search') {
-    // Test the search and filtering functionality
-    console.log('🧪 Running Search and Filtering tests...')
-    createSearchTest()
-  } else if (testPage === 'ux') {
-    // Test the UX enhancements including animations and micro-interactions
-    console.log('🧪 Running UX Enhancements tests...')
-    createUXEnhancementsTest()
-  } else {
-    // Create and initialize the landing page (default)
+    // Create and initialize the landing page
     new LandingPage(app, {
       modules: currentModules,
       courseStats: {
@@ -185,18 +130,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     setTimeout(() => {
       CachePerformanceMonitor.logStats()
     }, 2000)
-    
-    console.log('💡 Available test pages:')
-    console.log('   - ?test=module (ModulePage test)')
-    console.log('   - ?test=lesson (LessonPage with ContentRenderer test)')
-    console.log('   - ?test=content (ContentRenderer component tests)')
-    console.log('   - ?test=progress (Progress Tracking and Navigation test)')
-    console.log('   - ?test=accessibility (Accessibility Features test)')
-    console.log('   - ?test=performance (Performance Optimization tests)')
-    console.log('   - ?test=errors (Error Handling and Fallback Content tests)')
-    console.log('   - ?test=search (Search and Filtering functionality tests)')
-    console.log('   - ?test=ux (UX Enhancements: animations, micro-interactions, visual polish)')
-  }
   
   } catch (error) {
     console.error('Failed to initialize application:', error)

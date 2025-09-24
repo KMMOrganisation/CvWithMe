@@ -14,12 +14,18 @@ export interface LandingPageProps {
 export class LandingPage {
   private props: LandingPageProps;
   private element: HTMLElement;
+  private container: HTMLElement;
+  private modules: Module[];
+  private courseStats: any;
 
   private moduleCards: Map<number, ModuleCard> = new Map();
   private progressUnsubscribe?: () => void;
 
   constructor(container: HTMLElement, props: LandingPageProps) {
+    this.container = container;
     this.props = props;
+    this.modules = props.modules;
+    this.courseStats = props.courseStats;
     this.element = this.createElement();
     
     container.appendChild(this.element);
@@ -169,7 +175,14 @@ export class LandingPage {
         progress: moduleProgress?.percentage || 0,
         onClick: (clickedModule) => {
           this.handleModuleClick(clickedModule);
-        }
+        },
+        onQuickStart: (quickModule) => {
+          this.handleQuickStart(quickModule);
+        },
+        onLessonClick: (lesson) => {
+          this.navigateToLesson(module, lesson);
+        },
+        showQuickAccess: true
       });
       
       this.moduleCards.set(module.id, moduleCard);
@@ -202,8 +215,204 @@ export class LandingPage {
     // Navigate to module using the progress navigation manager
     progressNavigationManager.navigateToModule(module.id);
     
-    // For now, show an alert - in a real app this would navigate to the module page
-    alert(`Opening module: ${module.title}\n\nNavigation updated to show current module context.\nThis would navigate to the module page with ${module.lessons.length} lessons.\n\nURL updated to: ${progressNavigationManager.getShareableURL()}`);
+    // Navigate to the module page
+    this.navigateToModule(module);
+  }
+
+  private handleQuickStart(module: Module): void {
+    // Jump directly to the first lesson of the module
+    const firstLesson = module.lessons[0];
+    if (firstLesson) {
+      progressNavigationManager.navigateToLesson(firstLesson.id);
+      this.navigateToLesson(module, firstLesson);
+    }
+  }
+
+  private navigateToModule(module: Module): void {
+    // Clear the current content
+    this.container.innerHTML = '';
+    
+    // Import and create the module page
+    import('../pages/ModulePage.js').then(({ ModulePage }) => {
+      new ModulePage(this.container, {
+        module,
+        allModules: this.modules,
+        progress: this.getModuleProgress(module.id),
+        lessonProgress: this.getLessonProgressMap(module.id),
+        onLessonClick: (lesson) => this.navigateToLesson(module, lesson),
+        onModuleNavigation: (moduleId) => {
+          const targetModule = this.modules.find(m => m.id === moduleId);
+          if (targetModule) {
+            this.navigateToModule(targetModule);
+          }
+        }
+      });
+    }).catch(error => {
+      console.error('Error loading module page:', error);
+      // Fallback: show module info
+      this.showModuleFallback(module);
+    });
+  }
+
+  private getModuleProgress(moduleId: number): number {
+    // Get progress from progress navigation manager
+    const progress = progressNavigationManager.getModuleProgress(moduleId);
+    return progress?.percentage || 0;
+  }
+
+  private getLessonProgressMap(moduleId: number): Map<number, number> {
+    const progressMap = new Map<number, number>();
+    const module = this.modules.find(m => m.id === moduleId);
+    
+    if (module) {
+      module.lessons.forEach(lesson => {
+        const lessonProgress = progressNavigationManager.getLessonProgress(lesson.id);
+        progressMap.set(lesson.id, lessonProgress?.percentage || 0);
+      });
+    }
+    
+    return progressMap;
+  }
+
+  private navigateToLesson(module: Module, lesson: any): void {
+    // Clear the current content
+    this.container.innerHTML = '';
+    
+    // Find the lesson index
+    const currentLessonIndex = module.lessons.findIndex(l => l.id === lesson.id);
+    
+    // Import and create the lesson page
+    import('../pages/LessonPage.js').then(({ LessonPage }) => {
+      new LessonPage(this.container, {
+        lesson,
+        module: {
+          id: module.id,
+          title: module.title,
+          slug: module.slug,
+          totalLessons: module.lessons.length
+        },
+        currentLessonIndex,
+        onNavigateBack: () => this.navigateToModule(module),
+        onNavigateNext: () => {
+          const nextIndex = currentLessonIndex + 1;
+          if (nextIndex < module.lessons.length) {
+            this.navigateToLesson(module, module.lessons[nextIndex]);
+          }
+        },
+        onNavigatePrevious: () => {
+          const prevIndex = currentLessonIndex - 1;
+          if (prevIndex >= 0) {
+            this.navigateToLesson(module, module.lessons[prevIndex]);
+          }
+        },
+        onNavigateToModule: (moduleSlug) => {
+          const targetModule = this.modules.find(m => m.slug === moduleSlug);
+          if (targetModule) {
+            this.navigateToModule(targetModule);
+          }
+        }
+      });
+    }).catch(error => {
+      console.error('Error loading lesson page:', error);
+      // Fallback: show lesson info
+      this.showLessonFallback(lesson);
+    });
+  }
+
+  private navigateBack(): void {
+    // Recreate the landing page
+    this.container.innerHTML = '';
+    new (this.constructor as any)(this.container, {
+      modules: this.modules,
+      courseStats: this.courseStats
+    });
+  }
+
+  private showModuleFallback(module: Module): void {
+    this.container.innerHTML = `
+      <div class="module-fallback">
+        <header class="module-header">
+          <button class="back-button" id="back-to-home">← Back to Home</button>
+          <h1>${module.title}</h1>
+          <p class="module-description">${module.description}</p>
+          <div class="module-meta">
+            <span class="estimated-time">⏱️ ${module.estimatedTime}</span>
+            <span class="complexity">📊 ${module.complexity}</span>
+            <span class="lesson-count">📚 ${module.lessons.length} lessons</span>
+          </div>
+        </header>
+        <div class="lessons-list">
+          <h2>Lessons in this Module</h2>
+          ${module.lessons.map((lesson, index) => `
+            <div class="lesson-item" data-lesson-id="${lesson.id}">
+              <h3>${lesson.title}</h3>
+              <p>${lesson.description}</p>
+              <div class="lesson-meta">
+                <span>⏱️ ${lesson.estimatedTime}</span>
+                <span>🛠️ ${lesson.tools.join(', ')}</span>
+              </div>
+              <button class="lesson-button" data-lesson-index="${index}">Start Lesson</button>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+    
+    // Add event listeners
+    const backButton = this.container.querySelector('#back-to-home');
+    if (backButton) {
+      backButton.addEventListener('click', () => this.navigateBack());
+    }
+    
+    // Add lesson click handlers
+    const lessonButtons = this.container.querySelectorAll('.lesson-button');
+    lessonButtons.forEach(button => {
+      button.addEventListener('click', (e) => {
+        const target = e.target as HTMLElement;
+        const lessonIndex = parseInt(target.dataset.lessonIndex || '0', 10);
+        const lesson = module.lessons[lessonIndex];
+        if (lesson) {
+          this.navigateToLesson(module, lesson);
+        }
+      });
+    });
+  }
+
+  private showLessonFallback(lesson: any): void {
+    this.container.innerHTML = `
+      <div class="lesson-fallback">
+        <header class="lesson-header">
+          <button class="back-button" id="back-to-home-from-lesson">← Back to Home</button>
+          <h1>${lesson.title}</h1>
+          <p class="lesson-description">${lesson.description}</p>
+          <div class="lesson-meta">
+            <span class="estimated-time">⏱️ ${lesson.estimatedTime}</span>
+            <span class="tools">🛠️ ${lesson.tools.join(', ')}</span>
+            <span class="complexity">📊 ${lesson.complexity}</span>
+          </div>
+        </header>
+        <div class="lesson-content">
+          <h2>Lesson Content</h2>
+          <p>This lesson contains ${lesson.content.length} content blocks covering the fundamentals you need to know.</p>
+          <div class="content-preview">
+            ${lesson.content.slice(0, 3).map((block: any, index: number) => `
+              <div class="content-block-preview">
+                <h4>Content Block ${index + 1}: ${block.type}</h4>
+                <p>${block.type === 'text' ? (block.content.substring(0, 200) + '...') : `${block.type} content`}</p>
+              </div>
+            `).join('')}
+            ${lesson.content.length > 3 ? `<p><em>...and ${lesson.content.length - 3} more content blocks</em></p>` : ''}
+          </div>
+          <p><em>Full interactive lesson content will be displayed here when the ContentRenderer is properly integrated.</em></p>
+        </div>
+      </div>
+    `;
+    
+    // Add event listener for back button
+    const backButton = this.container.querySelector('#back-to-home-from-lesson');
+    if (backButton) {
+      backButton.addEventListener('click', () => this.navigateBack());
+    }
   }
 
   private setupProgressTracking(): void {

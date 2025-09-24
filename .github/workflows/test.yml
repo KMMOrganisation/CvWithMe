@@ -1,0 +1,332 @@
+name: Test Suite
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Run linting
+      run: npm run lint || echo "Linting not configured"
+    
+    - name: Run unit tests
+      run: npm run test
+    
+    - name: Run tests with coverage
+      run: npm run test:coverage
+    
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./coverage/lcov.info
+        flags: unittests
+        name: codecov-umbrella
+    
+    - name: Build project
+      run: npm run build
+    
+    - name: Install Playwright browsers
+      run: npx playwright install --with-deps
+    
+    - name: Run E2E tests
+      run: npm run test:e2e
+    
+    - name: Upload E2E test results
+      uses: actions/upload-artifact@v3
+      if: failure()
+      with:
+        name: playwright-report-${{ matrix.node-version }}
+        path: playwright-report/
+        retention-days: 30
+
+  accessibility:
+    runs-on: ubuntu-latest
+    needs: test
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Build project
+      run: npm run build
+    
+    - name: Install Playwright browsers
+      run: npx playwright install --with-deps
+    
+    - name: Run accessibility tests
+      run: npm run test:accessibility
+    
+    - name: Upload accessibility test results
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: accessibility-report
+        path: |
+          playwright-report/
+          test-reports/
+        retention-days: 30
+
+  performance:
+    runs-on: ubuntu-latest
+    needs: test
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Run performance tests
+      run: npm run test:performance
+    
+    - name: Upload performance test results
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: performance-report
+        path: test-reports/
+        retention-days: 30
+
+  cross-browser:
+    runs-on: ubuntu-latest
+    needs: test
+    
+    strategy:
+      matrix:
+        browser: [chromium, firefox, webkit]
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Build project
+      run: npm run build
+    
+    - name: Install Playwright browsers
+      run: npx playwright install --with-deps ${{ matrix.browser }}
+    
+    - name: Run E2E tests on ${{ matrix.browser }}
+      run: npx playwright test --project=${{ matrix.browser }}
+    
+    - name: Upload test results
+      uses: actions/upload-artifact@v3
+      if: failure()
+      with:
+        name: playwright-report-${{ matrix.browser }}
+        path: playwright-report/
+        retention-days: 30
+
+  mobile:
+    runs-on: ubuntu-latest
+    needs: test
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Build project
+      run: npm run build
+    
+    - name: Install Playwright browsers
+      run: npx playwright install --with-deps
+    
+    - name: Run mobile tests
+      run: npx playwright test --project="Mobile Chrome" --project="Mobile Safari"
+    
+    - name: Upload mobile test results
+      uses: actions/upload-artifact@v3
+      if: failure()
+      with:
+        name: mobile-test-report
+        path: playwright-report/
+        retention-days: 30
+
+  security:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Run security audit
+      run: npm audit --audit-level=moderate
+    
+    - name: Check for known vulnerabilities
+      run: npx audit-ci --moderate
+
+  bundle-analysis:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Build and analyze bundle
+      run: |
+        npm run build
+        npx vite-bundle-analyzer dist --open false --json > bundle-analysis.json
+    
+    - name: Upload bundle analysis
+      uses: actions/upload-artifact@v3
+      with:
+        name: bundle-analysis
+        path: bundle-analysis.json
+        retention-days: 30
+    
+    - name: Comment bundle size
+      uses: actions/github-script@v6
+      if: github.event_name == 'pull_request'
+      with:
+        script: |
+          const fs = require('fs');
+          if (fs.existsSync('bundle-analysis.json')) {
+            const analysis = JSON.parse(fs.readFileSync('bundle-analysis.json', 'utf8'));
+            const comment = `## Bundle Analysis 📦
+            
+            | File | Size | Gzipped |
+            |------|------|---------|
+            ${analysis.assets.map(asset => 
+              `| ${asset.name} | ${asset.size} | ${asset.gzipped || 'N/A'} |`
+            ).join('\n')}
+            
+            Total bundle size: **${analysis.totalSize}**`;
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+          }
+
+  lighthouse:
+    runs-on: ubuntu-latest
+    needs: test
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Build project
+      run: npm run build
+    
+    - name: Serve built project
+      run: |
+        npm run preview &
+        sleep 10
+    
+    - name: Run Lighthouse CI
+      run: |
+        npm install -g @lhci/cli@0.12.x
+        lhci autorun
+      env:
+        LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+
+  summary:
+    runs-on: ubuntu-latest
+    needs: [test, accessibility, performance, cross-browser, mobile, security]
+    if: always()
+    
+    steps:
+    - name: Test Summary
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const jobs = [
+            { name: 'Unit Tests', status: '${{ needs.test.result }}' },
+            { name: 'Accessibility Tests', status: '${{ needs.accessibility.result }}' },
+            { name: 'Performance Tests', status: '${{ needs.performance.result }}' },
+            { name: 'Cross-browser Tests', status: '${{ needs.cross-browser.result }}' },
+            { name: 'Mobile Tests', status: '${{ needs.mobile.result }}' },
+            { name: 'Security Audit', status: '${{ needs.security.result }}' }
+          ];
+          
+          const summary = jobs.map(job => 
+            `${job.status === 'success' ? '✅' : job.status === 'failure' ? '❌' : '⚠️'} ${job.name}: ${job.status}`
+          ).join('\n');
+          
+          core.summary.addHeading('Test Results Summary');
+          core.summary.addRaw(summary);
+          core.summary.write();

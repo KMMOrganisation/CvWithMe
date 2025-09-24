@@ -6,17 +6,27 @@
   "scripts": {
     "dev": "vite",
     "build": "npm run build:content && tsc && vite build",
+    "build:deploy": "npm run build:content && vite build",
     "build:content": "node scripts/buildContent.js",
     "build:content:watch": "node scripts/buildContent.js --watch",
     "validate:content": "node scripts/buildContent.js --validate-only",
+    "build:production": "npm run validate:content && npm run build:deploy",
+    "build:production:with-tests": "npm run validate:content && npm run test && npm run build",
+    "build:analyze": "npm run build && npx vite-bundle-analyzer dist",
     "preview": "vite preview",
+    "preview:production": "npm run build:production && vite preview",
     "test": "vitest --run",
     "test:watch": "vitest",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest --coverage",
     "test:e2e": "playwright test",
     "test:accessibility": "vitest --run --reporter=verbose tests/accessibility",
-    "test:performance": "vitest --run --reporter=verbose tests/performance"
+    "test:performance": "vitest --run --reporter=verbose tests/performance",
+    "lint": "echo 'Linting not configured yet'",
+    "clean": "rm -rf dist node_modules/.vite",
+    "deploy:netlify": "npm run build:production && netlify deploy --prod --dir=dist",
+    "deploy:vercel": "npm run build:production && vercel --prod",
+    "deploy:gh-pages": "npm run build:production && gh-pages -d dist"
   },
   "devDependencies": {
     "terser": "^5.44.0",
@@ -24,11 +34,19 @@
     "vite": "^4.4.5",
     "vitest": "^1.0.0",
     "@vitest/ui": "^1.0.0",
+    "@vitest/coverage-v8": "^1.0.0",
     "jsdom": "^23.0.0",
     "@testing-library/dom": "^9.3.0",
     "@testing-library/user-event": "^14.5.0",
     "axe-core": "^4.8.0",
     "playwright": "^1.40.0",
-    "@axe-core/playwright": "^4.8.0"
+    "@axe-core/playwright": "^4.8.0",
+    "happy-dom": "^12.10.0",
+    "gh-pages": "^6.0.0",
+    "netlify-cli": "^17.0.0",
+    "vercel": "^32.0.0",
+    "vite-bundle-analyzer": "^0.7.0",
+    "@lhci/cli": "^0.12.0",
+    "audit-ci": "^6.6.1"
   }
 }

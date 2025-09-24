@@ -7,6 +7,9 @@ export interface ModuleCardProps {
   progress?: number; // Progress percentage (0-100)
   completedLessons?: number; // Number of completed lessons
   onClick?: (module: Module) => void;
+  onQuickStart?: (module: Module) => void;
+  onLessonClick?: (lesson: any) => void;
+  showQuickAccess?: boolean; // Show quick start and lesson preview
 }
 
 export class ModuleCard {
@@ -71,12 +74,17 @@ export class ModuleCard {
         
         ${module.prerequisites.length > 0 ? this.createPrerequisites(module.prerequisites) : ''}
         
-        <div class="module-card__action">
-          <span class="module-card__cta" aria-hidden="true">
-            ${progress > 0 ? 'Continue Learning' : 'Start Module'}
-            <span class="module-card__arrow">→</span>
-          </span>
+        <div class="module-card__actions">
+          <div class="module-card__primary-action">
+            <span class="module-card__cta" aria-hidden="true">
+              ${progress > 0 ? 'Continue Learning' : 'View Module'}
+              <span class="module-card__arrow">→</span>
+            </span>
+          </div>
+          ${this.props.showQuickAccess ? this.createQuickAccessActions() : ''}
         </div>
+        
+        ${this.props.showQuickAccess ? this.createLessonPreview() : ''}
       </div>
     `;
 
@@ -118,8 +126,54 @@ export class ModuleCard {
     `;
   }
 
+  private createQuickAccessActions(): string {
+    console.log('Creating quick access actions for module:', this.props.module.title);
+    return `
+      <div class="module-card__quick-actions">
+        <button class="module-card__quick-start-btn" data-action="quick-start" aria-label="Start first lesson of ${this.props.module.title}">
+          <span class="quick-start-icon">⚡</span>
+          Quick Start
+        </button>
+        <button class="module-card__toggle-lessons" data-action="toggle-lessons" aria-label="Show lessons in ${this.props.module.title}" aria-expanded="false">
+          <span class="toggle-icon">📋</span>
+          <span class="toggle-text">Lessons</span>
+          <span class="toggle-arrow">▼</span>
+        </button>
+      </div>
+    `;
+  }
+
+  private createLessonPreview(): string {
+    const { module } = this.props;
+    return `
+      <div class="module-card__lessons-preview" data-lessons-preview style="display: none;" aria-hidden="true">
+        <div class="lessons-preview__header">
+          <h4>Lessons in this module:</h4>
+        </div>
+        <ul class="lessons-preview__list" role="list">
+          ${module.lessons.map((lesson, index) => `
+            <li class="lessons-preview__item" role="listitem">
+              <button class="lesson-preview-btn" data-lesson-id="${lesson.id}" data-lesson-index="${index}" aria-label="Start lesson: ${lesson.title}">
+                <span class="lesson-number">${index + 1}.</span>
+                <span class="lesson-title">${lesson.title}</span>
+                <span class="lesson-time">${lesson.estimatedTime}</span>
+                <span class="lesson-arrow">→</span>
+              </button>
+            </li>
+          `).join('')}
+        </ul>
+      </div>
+    `;
+  }
+
   private addEventListeners(card: HTMLElement): void {
-    const handleClick = () => {
+    const handleMainClick = (event: Event) => {
+      // Don't trigger main click if clicking on quick action buttons
+      const target = event.target as HTMLElement;
+      if (target.closest('.module-card__quick-actions') || target.closest('.lessons-preview__list')) {
+        return;
+      }
+      
       if (this.props.onClick) {
         // Announce the action to screen readers
         accessibilityManager.announce(`Opening ${this.props.module.title}`, 'polite');
@@ -129,13 +183,19 @@ export class ModuleCard {
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Enter' || event.key === ' ') {
-        event.preventDefault();
-        handleClick();
+        const target = event.target as HTMLElement;
+        if (!target.closest('.module-card__quick-actions') && !target.closest('.lessons-preview__list')) {
+          event.preventDefault();
+          handleMainClick(event);
+        }
       }
     };
 
-    card.addEventListener('click', handleClick);
+    card.addEventListener('click', handleMainClick);
     card.addEventListener('keydown', handleKeyDown);
+
+    // Add quick action event listeners
+    this.addQuickActionListeners(card);
 
     // Add focus management for accessibility
     card.addEventListener('focus', () => {
@@ -189,6 +249,79 @@ export class ModuleCard {
     this.progressIndicator?.destroy();
     // Clean up event listeners
     this.element.remove();
+  }
+
+  private addQuickActionListeners(card: HTMLElement): void {
+    console.log('Adding quick action listeners for module:', this.props.module.title);
+    
+    // Quick start button
+    const quickStartBtn = card.querySelector('.module-card__quick-start-btn');
+    console.log('Quick start button found:', !!quickStartBtn);
+    
+    if (quickStartBtn) {
+      quickStartBtn.addEventListener('click', (e) => {
+        console.log('Quick start button clicked!');
+        e.stopPropagation();
+        if (this.props.onQuickStart) {
+          console.log('Calling onQuickStart callback');
+          accessibilityManager.announce(`Starting first lesson of ${this.props.module.title}`, 'polite');
+          this.props.onQuickStart(this.props.module);
+        } else {
+          console.log('No onQuickStart callback provided');
+        }
+      });
+    }
+
+    // Toggle lessons button
+    const toggleBtn = card.querySelector('.module-card__toggle-lessons');
+    const lessonsPreview = card.querySelector('.module-card__lessons-preview') as HTMLElement;
+    
+    if (toggleBtn && lessonsPreview) {
+      toggleBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.toggleLessonsPreview(toggleBtn as HTMLElement, lessonsPreview);
+      });
+    }
+
+    // Individual lesson buttons
+    const lessonBtns = card.querySelectorAll('.lesson-preview-btn');
+    lessonBtns.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const lessonIndex = parseInt((btn as HTMLElement).dataset.lessonIndex || '0', 10);
+        const lesson = this.props.module.lessons[lessonIndex];
+        if (lesson && this.props.onLessonClick) {
+          accessibilityManager.announce(`Starting lesson: ${lesson.title}`, 'polite');
+          this.props.onLessonClick(lesson);
+        }
+      });
+    });
+  }
+
+  private toggleLessonsPreview(toggleBtn: HTMLElement, lessonsPreview: HTMLElement): void {
+    const isExpanded = toggleBtn.getAttribute('aria-expanded') === 'true';
+    const newExpanded = !isExpanded;
+    
+    // Update ARIA state
+    toggleBtn.setAttribute('aria-expanded', newExpanded.toString());
+    lessonsPreview.setAttribute('aria-hidden', (!newExpanded).toString());
+    
+    // Update visual state
+    if (newExpanded) {
+      lessonsPreview.style.display = 'block';
+      toggleBtn.querySelector('.toggle-arrow')!.textContent = '▲';
+      toggleBtn.querySelector('.toggle-text')!.textContent = 'Hide';
+      this.element.classList.add('module-card--expanded');
+    } else {
+      lessonsPreview.style.display = 'none';
+      toggleBtn.querySelector('.toggle-arrow')!.textContent = '▼';
+      toggleBtn.querySelector('.toggle-text')!.textContent = 'Lessons';
+      this.element.classList.remove('module-card--expanded');
+    }
+    
+    // Announce the change
+    const action = newExpanded ? 'expanded' : 'collapsed';
+    accessibilityManager.announce(`Lessons list ${action}`, 'polite');
   }
 }
 

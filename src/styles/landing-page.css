@@ -618,3 +618,151 @@ Simple Header Responsive Styles */
     padding: var(--space-1);
   }
 }
+/* Mod
+ule and lesson fallback styles */
+.module-fallback,
+.lesson-fallback {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--space-6);
+  background: white;
+  min-height: 100vh;
+}
+
+.module-header,
+.lesson-header {
+  border-bottom: 2px solid var(--gray-200);
+  padding-bottom: var(--space-6);
+  margin-bottom: var(--space-6);
+}
+
+.back-button {
+  background: var(--primary-600);
+  color: white;
+  border: none;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-weight: 500;
+  margin-bottom: var(--space-4);
+  transition: background-color var(--transition-fast);
+}
+
+.back-button:hover {
+  background: var(--primary-700);
+}
+
+.module-header h1,
+.lesson-header h1 {
+  color: var(--primary-700);
+  margin-bottom: var(--space-3);
+}
+
+.module-description,
+.lesson-description {
+  font-size: var(--text-lg);
+  color: var(--gray-600);
+  margin-bottom: var(--space-4);
+}
+
+.module-meta,
+.lesson-meta {
+  display: flex;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  font-size: var(--text-sm);
+  color: var(--gray-500);
+}
+
+.lessons-list {
+  margin-top: var(--space-6);
+}
+
+.lessons-list h2 {
+  color: var(--primary-700);
+  margin-bottom: var(--space-4);
+}
+
+.lesson-item {
+  background: var(--gray-50);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.lesson-item h3 {
+  color: var(--primary-600);
+  margin-bottom: var(--space-2);
+}
+
+.lesson-item p {
+  color: var(--gray-600);
+  margin-bottom: var(--space-3);
+}
+
+.lesson-content {
+  background: var(--gray-50);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  margin-top: var(--space-6);
+}
+
+.lesson-content h2 {
+  color: var(--primary-700);
+  margin-bottom: var(--space-4);
+}
+
+/* Responsive design for fallback pages */
+@media (max-width: 768px) {
+  .module-fallback,
+  .lesson-fallback {
+    padding: var(--space-4);
+  }
+  
+  .module-meta,
+  .lesson-meta {
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+}.
+lesson-button {
+  background: var(--primary-600);
+  color: white;
+  border: none;
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-weight: 500;
+  margin-top: var(--space-3);
+  transition: background-color var(--transition-fast);
+}
+
+.lesson-button:hover {
+  background: var(--primary-700);
+}
+
+.content-preview {
+  margin: var(--space-4) 0;
+}
+
+.content-block-preview {
+  background: white;
+  border: 1px solid var(--gray-300);
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.content-block-preview h4 {
+  color: var(--primary-600);
+  margin-bottom: var(--space-2);
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.content-block-preview p {
+  color: var(--gray-600);
+  font-size: var(--text-sm);
+  margin: 0;
+}
