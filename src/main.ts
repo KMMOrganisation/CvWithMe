@@ -97,8 +97,26 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Get modules from the initialized data
     const currentModules = getAllModules()
     
+    // Create app structure with simple navbar
+    app.innerHTML = `
+      <nav class="simple-navbar">
+        <div class="navbar-container">
+          <a href="/" class="navbar-brand">
+            <span class="navbar-icon">🎓</span>
+            <span class="navbar-text">CV Tutorial</span>
+          </a>
+          <div class="navbar-links">
+            <a href="/" class="navbar-link">Home</a>
+          </div>
+        </div>
+      </nav>
+      <main id="main-content"></main>
+    `
+    
+    const mainContent = document.getElementById('main-content')!
+    
     // Create and initialize the landing page
-    new LandingPage(app, {
+    new LandingPage(mainContent, {
       modules: currentModules,
       courseStats: {
         totalModules: courseStats?.totalModules || 0,
@@ -107,7 +125,37 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
     })
     
-    console.log('✅ Landing page initialized with hero section, module grid, and responsive design')
+    // Handle navbar navigation
+    const navbar = document.querySelector('.simple-navbar')!
+    navbar.addEventListener('click', (e) => {
+      const target = e.target as HTMLElement
+      const link = target.closest('a[href]') as HTMLAnchorElement
+      
+      if (link && link.href.startsWith(window.location.origin)) {
+        e.preventDefault()
+        const path = link.getAttribute('href')
+        if (path === '/') {
+          // Reload home page
+          window.location.reload()
+        } else {
+          // For now, show a simple message for other pages
+          mainContent.innerHTML = `
+            <div style="padding: 2rem; text-align: center;">
+              <h1>Page: ${path}</h1>
+              <p>This page is under construction.</p>
+              <a href="/" style="color: #3b82f6; text-decoration: none;">← Back to Home</a>
+            </div>
+          `
+        }
+      }
+    })
+    
+    // Handle browser back/forward buttons
+    window.addEventListener('popstate', () => {
+      window.location.reload()
+    })
+    
+    console.log('✅ Landing page initialized with navbar and navigation')
     console.log('✅ Navigation component integrated with smooth scroll functionality')
     console.log('✅ Module cards rendered with real course data and progress indicators')
     console.log('✅ Progress tracking and URL-based navigation state management active')

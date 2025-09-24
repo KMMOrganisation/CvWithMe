@@ -1,0 +1,71 @@
+/**
+ * Simple Navigation Bar Styles - Clean and Professional
+ */
+
+.simple-navbar {
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+/* Hide conflicting navigation components - only show the top navbar */
+.navigation {
+  display: none !important;
+}
+
+.navbar-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 64px;
+}
+
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  color: #1f2937;
+  font-weight: 600;
+  font-size: 1.125rem;
+}
+
+.navbar-brand:hover {
+  color: #3b82f6;
+}
+
+.navbar-icon {
+  font-size: 1.5rem;
+}
+
+.navbar-links {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.navbar-link {
+  color: #6b7280;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  transition: all 0.2s ease;
+}
+
+.navbar-link:hover {
+  color: #3b82f6;
+  background-color: #f3f4f6;
+}
+
+@media (max-width: 768px) {
+  .navbar-container {
+    padding: 0 1rem;
+  }
+}

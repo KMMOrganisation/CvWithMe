@@ -1,0 +1,43 @@
+/**
+ * App Layout Styles
+ */
+
+#app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+#global-nav-container {
+  flex-shrink: 0;
+}
+
+#main-content {
+  flex: 1;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* Ensure proper spacing for module and lesson pages */
+.module-page,
+.lesson-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+/* Responsive spacing */
+@media (max-width: 768px) {
+  .module-page,
+  .lesson-page {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .module-page,
+  .lesson-page {
+    padding: 0.75rem;
+  }
+}

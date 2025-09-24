@@ -175,14 +175,7 @@ export class LandingPage {
         progress: moduleProgress?.percentage || 0,
         onClick: (clickedModule) => {
           this.handleModuleClick(clickedModule);
-        },
-        onQuickStart: (quickModule) => {
-          this.handleQuickStart(quickModule);
-        },
-        onLessonClick: (lesson) => {
-          this.navigateToLesson(module, lesson);
-        },
-        showQuickAccess: true
+        }
       });
       
       this.moduleCards.set(module.id, moduleCard);
@@ -219,14 +212,7 @@ export class LandingPage {
     this.navigateToModule(module);
   }
 
-  private handleQuickStart(module: Module): void {
-    // Jump directly to the first lesson of the module
-    const firstLesson = module.lessons[0];
-    if (firstLesson) {
-      progressNavigationManager.navigateToLesson(firstLesson.id);
-      this.navigateToLesson(module, firstLesson);
-    }
-  }
+
 
   private navigateToModule(module: Module): void {
     // Clear the current content
@@ -266,8 +252,8 @@ export class LandingPage {
     
     if (module) {
       module.lessons.forEach(lesson => {
-        const lessonProgress = progressNavigationManager.getLessonProgress(lesson.id);
-        progressMap.set(lesson.id, lessonProgress?.percentage || 0);
+        // For now, set all lessons to 0% progress
+        progressMap.set(lesson.id, 0);
       });
     }
     

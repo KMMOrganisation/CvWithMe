@@ -91,8 +91,9 @@ export class Router {
     });
 
     // Handle browser back/forward
-    window.addEventListener('popstate', () => {
+    window.addEventListener('popstate', (event) => {
       if (this.isInitialized) {
+        console.log('Popstate event:', event.state);
         this.handleCurrentRoute();
       }
     });
@@ -416,8 +417,10 @@ export class Router {
   /**
    * Navigate to a specific path
    */
-  public navigate(path: string): void {
-    window.history.pushState(null, '', path);
+  public navigate(path: string, pushState: boolean = true): void {
+    if (pushState) {
+      window.history.pushState({ path }, '', path);
+    }
     this.handleCurrentRoute();
   }
 
